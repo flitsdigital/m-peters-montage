@@ -1,0 +1,14 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import HeroUtility from "../components/sections/HeroUtility.astro";
+import Button from "../components/atoms/Button.astro";
+---
+
+<PageLayout title="Pagina niet gevonden | M. Peters Montage" noindex>
+  <HeroUtility
+    title="Pagina niet gevonden"
+    text="Deze pagina bestaat niet (meer). Vanaf de homepage kom je er vast wel."
+  >
+    <Button label="Naar de homepage" href="/" icon="arrow-right" />
+  </HeroUtility>
+</PageLayout>

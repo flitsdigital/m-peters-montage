@@ -1,0 +1,13 @@
+---
+/**
+ * Rich-text container (u-rich-text). De typografie staat in base.css;
+ * dit is de vaste wrapper. Fase 4 voedt dit met Portable Text-output.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: cls } = Astro.props;
+---
+
+<div class:list={["u-rich-text", cls]}><slot /></div>

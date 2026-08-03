@@ -1,0 +1,75 @@
+---
+/**
+ * Regiokaart (regio_item): 4:5 beeld met donkere laag, pijl-icoon in een wit
+ * blokje en de plaatsnaam onderin. Hele kaart klikbaar.
+ */
+import Clickable from "../atoms/Clickable.astro";
+import Icon from "../atoms/Icon.astro";
+import Image from "../atoms/Image.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  href: string;
+  title: string;
+  image: ImageMetadata | string;
+  alt: string;
+}
+
+const { href, title, image, alt } = Astro.props;
+---
+
+<div class="regio_item">
+  <div class="regio_image-wrap">
+    <Image src={image} {alt} class="regio_image" sizes="(max-width: 767px) 100vw, 33vw" />
+    <div class="regio_image-background"></div>
+  </div>
+  <div class="regio_content">
+    <div class="regio_icon"><Icon name="arrow-simple" /></div>
+    <h2>{title}</h2>
+  </div>
+  <Clickable label={title} {href} />
+</div>
+
+<style>
+  .regio_item,
+  .regio_image-wrap {
+    position: relative;
+  }
+
+  .regio_item :global(.regio_image) {
+    aspect-ratio: 4 / 5;
+    position: relative;
+  }
+
+  .regio_image-background {
+    background-color: var(--swatch--dark-100);
+    opacity: 0.4;
+    position: absolute;
+    inset: 0%;
+  }
+
+  .regio_content {
+    flex-flow: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 100%;
+    padding: 2rem;
+    display: flex;
+    position: absolute;
+    inset: auto 0% 0%;
+  }
+
+  .regio_icon {
+    border: 1px solid var(--swatch--light-100);
+    background-color: var(--swatch--light-100);
+    width: 3rem;
+    height: 3rem;
+    color: var(--swatch--dark-100);
+    padding: 0.5rem;
+  }
+
+  /* Het beeld staat op een dark achtergrond; de titel is altijd wit. */
+  .regio_content h2 {
+    color: var(--swatch--light-100);
+  }
+</style>

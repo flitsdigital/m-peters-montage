@@ -1,0 +1,17 @@
+---
+/**
+ * Kop met losgekoppeld semantisch niveau en visuele stijl.
+ * `as` bepaalt het element (SEO/outline), `style` de u-text-style-* class —
+ * exact zoals het origineel bv. een h1 met class u-text-style-h2 zet.
+ * Zonder `style` gelden de element-defaults uit base.css.
+ */
+interface Props {
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  style?: "display" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  class?: string;
+}
+
+const { as: Tag = "h2", style, class: cls } = Astro.props;
+---
+
+<Tag class:list={[style && `u-text-style-${style}`, cls]}><slot /></Tag>

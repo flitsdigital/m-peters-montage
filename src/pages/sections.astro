@@ -1,0 +1,370 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/sections/Navbar.astro";
+import Footer from "../components/sections/Footer.astro";
+import HeroHome from "../components/sections/HeroHome.astro";
+import HeaderCentered from "../components/sections/HeaderCentered.astro";
+import SectionMedia from "../components/sections/SectionMedia.astro";
+import SectionContentCentered from "../components/sections/SectionContentCentered.astro";
+import SectionRichText from "../components/sections/SectionRichText.astro";
+import SectionWerkwijze from "../components/sections/SectionWerkwijze.astro";
+import SectionReviews from "../components/sections/SectionReviews.astro";
+import SectionProjecten from "../components/sections/SectionProjecten.astro";
+import SectionFaq from "../components/sections/SectionFaq.astro";
+import SectionContact from "../components/sections/SectionContact.astro";
+import SectionDiensten from "../components/sections/SectionDiensten.astro";
+import SectionCardGrid from "../components/sections/SectionCardGrid.astro";
+import SectionBlogContent from "../components/sections/SectionBlogContent.astro";
+import SectionProjectImages from "../components/sections/SectionProjectImages.astro";
+import SectionRegio from "../components/sections/SectionRegio.astro";
+import SectionLinks from "../components/sections/SectionLinks.astro";
+import HeroUtility from "../components/sections/HeroUtility.astro";
+import ContactItem from "../components/molecules/ContactItem.astro";
+
+import {
+  IMAGES,
+  DIENST_CARDS,
+  REVIEWS,
+  PROJECTEN,
+  BLOGS,
+  WERKWIJZE_STAPPEN,
+  FAQ_ITEMS,
+  REGIOS,
+  HANDIGE_LINKS,
+} from "../data/demo";
+import { SITE } from "../data/site";
+
+const INDEX = [
+  ["navbar", "Navbar", "nav_wrap · 31×"],
+  ["footer", "Footer", "footer-new · 31×"],
+  ["hero-home", "HeroHome", "section_home-hero · 1×"],
+  ["header-centered", "HeaderCentered", "section_header-centered · 34×"],
+  ["header-plain", "HeaderCentered variant=plain", "section_content-header · 1×"],
+  ["media-content", "SectionMedia variant=content", "section_content · 41×"],
+  ["media-over", "SectionMedia variant=over", "section_over · 14×"],
+  ["content-centered", "SectionContentCentered", "section_content-centered · 1×"],
+  ["rich-text", "SectionRichText", "section_rich-text · 32×"],
+  ["werkwijze", "SectionWerkwijze", "section_werkwijze · 12×"],
+  ["reviews", "SectionReviews", "section_reviews · 15×"],
+  ["projecten", "SectionProjecten", "section_projecten · 14×"],
+  ["faq", "SectionFaq", "section_faq · 17×"],
+  ["diensten", "SectionDiensten", "section_diensten · 1×"],
+  ["card-grid", "SectionCardGrid", "section_blog-items · 3×"],
+  ["blog-content", "SectionBlogContent", "section_blog-content · 1×"],
+  ["project-images", "SectionProjectImages", "section_project-images · 1×"],
+  ["regio", "SectionRegio", "section_regio · 1×"],
+  ["links", "SectionLinks", "section_links · 1×"],
+  ["contact", "SectionContact", "section_contact · 31×"],
+  ["hero-utility", "HeroUtility", "hero_utility-page · 2×"],
+];
+---
+
+<BaseLayout
+  title="Sections — M. Peters Montage"
+  noindex
+  analytics={false}
+  canonicalPath="/sections"
+>
+  <div class="page_wrap">
+    <Navbar path="/sections" />
+
+    <main class="page_main">
+      <div class="sx-intro">
+        <p class="sx-kicker">Design system</p>
+        <h1>Sections</h1>
+        <p class="u-text-style-large">
+          Elke sectie met representatieve props, in de themes en spacing waarin hij op de
+          site voorkomt. De navbar hierboven en de footer onderaan zijn de echte
+          componenten.
+        </p>
+        <ol class="sx-index">
+          {
+            INDEX.map(([id, name, meta]) => (
+              <li>
+                <a href={`#${id}`}>{name}</a> <span>{meta}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <p class="sx-label" id="hero-home">HeroHome — section_home-hero</p>
+      <HeroHome
+        heading="Montage bedrijf in emmen en omgeving"
+        body="Zoek je een montagebedrijf in Emmen en omgeving voor jouw kozijnen, veranda's, glazen schuifwanden en zonwering? Dan ben je bij mij aan het goede adres."
+        image={IMAGES.hero}
+        alt="m. peters montage een frame aan het opmeten"
+      />
+
+      <p class="sx-label" id="header-centered">
+        HeaderCentered — met beeld, kruimelpad en CTA
+      </p>
+      <HeaderCentered
+        heading="Verschillende soorten kunststof kozijnen"
+        image={IMAGES.kozijn}
+        alt="m. peters montage oud kozijn er uit"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Kunststof Kozijnen", href: "/kunststof-kozijnen" },
+          { label: "Soorten", href: "/kunststof-kozijnen/soorten" },
+        ]}
+        cta={{ label: "Contact opnemen", href: "/contact" }}
+      />
+
+      <p class="sx-label">HeaderCentered — met contactregels en intro (/contact)</p>
+      <HeaderCentered
+        heading="Waar kan ik je mee helpen?"
+        body="Heb je een vraag, een project waar we mee kunnen helpen, of wil je direct een offerte aanvragen? Laat van je horen!"
+        image={IMAGES.kozijnen}
+        alt="Kunststof kozijnen in Emmen"
+      >
+        <div class="u-mb-4" slot="above">
+          <div class="sx-contact-items">
+            <ContactItem href={SITE.phoneHref} label={SITE.phoneDisplay} icon="phone" />
+            <ContactItem href={`mailto:${SITE.email}`} label={SITE.email} icon="mail" />
+          </div>
+        </div>
+      </HeaderCentered>
+
+      <p class="sx-label" id="header-plain">
+        HeaderCentered variant=plain — section_content-header
+      </p>
+      <HeaderCentered
+        variant="plain"
+        heading="Actief en betrokken, ook bij u in de regio"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Kunststof Kozijnen", href: "/kunststof-kozijnen" },
+          { label: "Regio's", href: "/kunststof-kozijnen/regio" },
+        ]}
+      />
+
+      <p class="sx-label" id="media-content">
+        SectionMedia variant=content — beeld links, tekst rechts
+      </p>
+      <SectionMedia
+        heading="M Peters Montage in Klazienaveen"
+        eyebrow={{ text: "Werkwijze", variant: "secondary" }}
+        image={IMAGES.ladder}
+        alt="foto van m. peters montage op een ladder"
+        cta={{ label: "Contact opnemen", href: "/contact" }}
+      >
+        <p>
+          Nadat je een offerte hebt aangevraagd, kom ik graag langs om alles nauwkeurig in
+          te meten. Op basis daarvan bestel ik de benodigde materialen, zodat ik snel en
+          efficiënt aan de slag kan.
+        </p>
+      </SectionMedia>
+
+      <p class="sx-label" id="media-over">
+        SectionMedia variant=over — tekst links, overhangend beeld rechts, dark
+      </p>
+      <SectionMedia
+        variant="over"
+        heading="Welkom, mijn naam is Michael Peters!"
+        eyebrow={{ text: "Over mij" }}
+        image={IMAGES.portret}
+        alt="portretfoto van michael peters"
+        cta={{ label: "Contact opnemen", href: "/contact" }}
+      >
+        <p>
+          In 2023 ben ik gestart met mijn montagebedrijf. Met maar liefst 9 jaar ervaring
+          in deze branche heb ik in korte tijd al veel klanten blij mogen maken.
+        </p>
+      </SectionMedia>
+
+      <p class="sx-label" id="content-centered">SectionContentCentered</p>
+      <SectionContentCentered
+        heading="In 2023 begon ik voor mijzelf..."
+        eyebrow={{ text: "Mijn verhaal" }}
+        cta={{ label: "Contact opnemen", href: "/contact" }}
+      >
+        <p>
+          Met maar liefst 9 jaar ervaring. In korte tijd heb ik al veel klanten blij mogen
+          maken, met kozijnen, veranda's, glazen schuifwanden of zonwering!
+        </p>
+      </SectionContentCentered>
+
+      <p class="sx-label" id="rich-text">SectionRichText</p>
+      <SectionRichText>
+        <p>
+          Een duurzaam huis begint bij de juiste kozijnen. Kunststof kozijnen zijn
+          vandaag de dag niet meer weg te denken uit de Nederlandse woningbouw.
+        </p>
+        <h2>Wat zijn kunststof kozijnen?</h2>
+        <p>
+          Kunststof kozijnen zijn kozijnsystemen gemaakt van PVC, een
+          <a href="/kunststof-kozijnen/materialen">materiaal</a> dat bekendstaat om zijn
+          duurzaamheid en minimale onderhoudsbehoefte.
+        </p>
+        <ul>
+          <li>A-kwaliteit materialen</li>
+          <li>Professionele montage</li>
+          <li>Eerlijk advies en scherpe prijzen</li>
+        </ul>
+      </SectionRichText>
+
+      <p class="sx-label" id="werkwijze">SectionWerkwijze</p>
+      <SectionWerkwijze
+        heading="Jouw kunststof kozijnen laten plaatsen in Emmen"
+        steps={WERKWIJZE_STAPPEN}
+      >
+        <p>
+          Nadat je een offerte hebt aangevraagd, kom ik graag langs om alles nauwkeurig in
+          te meten. We bespreken welke soort kunststof kozijnen je wil, en ik geef op maat
+          gemaakt advies.
+        </p>
+      </SectionWerkwijze>
+
+      <p class="sx-label" id="reviews">SectionReviews — light, Swiper 8s autoplay</p>
+      <SectionReviews heading="Wat klanten over mij zeggen" reviews={REVIEWS}>
+        <p>
+          Het vertrouwen dat ik van mijn klanten krijg, waardeer ik enorm. Of het nu gaat
+          om een kleine aanpassing of een groot project, ik ben pas tevreden als jij dat
+          ook bent.
+        </p>
+      </SectionReviews>
+
+      <p class="sx-label" id="projecten">SectionProjecten — Swiper 3s autoplay, 4 slides</p>
+      <SectionProjecten
+        heading="Deze klanten heb ik tevreden mogen maken!"
+        projects={PROJECTEN}
+      >
+        <p>
+          Ontdek een selectie projecten waar ik trots op ben! Van kunststof kozijnen, tot
+          prachtige veranda's en meer!
+        </p>
+      </SectionProjecten>
+
+      <p class="sx-label" id="faq">SectionFaq — accordeon, 2 kolommen</p>
+      <SectionFaq items={FAQ_ITEMS} />
+
+      <p class="sx-label" id="diensten">SectionDiensten</p>
+      <SectionDiensten
+        heading="Wat kan ik voor je betekenen?"
+        items={DIENST_CARDS}
+        id="diensten-demo"
+      >
+        <p>
+          Zowel zakelijke als particuliere klanten kunnen bij mij terecht voor de
+          vakkundige montage van kunststof kozijnen, veranda's, glazen schuifwanden en
+          zonwering.
+        </p>
+      </SectionDiensten>
+
+      <p class="sx-label" id="card-grid">SectionCardGrid</p>
+      <SectionCardGrid heading="Blogs" items={BLOGS} />
+
+      <p class="sx-label" id="blog-content">SectionBlogContent — smalle container</p>
+      <SectionBlogContent>
+        <p>
+          Kunststof kozijnen zijn populair, en dat is niet voor niets. Ze zijn duurzaam,
+          isolerend en onderhoudsarm. Maar onderhoudsarm betekent niet onderhoudsvrij.
+        </p>
+        <h2>1. Schoonmaken? Begin altijd met spoelen</h2>
+        <p>
+          Voordat je de spons erbij pakt, is het belangrijk om het kozijn eerst af te
+          spoelen met water.
+        </p>
+        <blockquote>
+          <strong>Pro-tip:</strong> vergeet ook de onderdorpel niet.
+        </blockquote>
+      </SectionBlogContent>
+
+      <p class="sx-label" id="project-images">SectionProjectImages — met lightbox</p>
+      <SectionProjectImages
+        images={[
+          { src: IMAGES.kozijnen, alt: "Kunststof kozijnen" },
+          { src: IMAGES.veranda, alt: "Veranda" },
+          { src: IMAGES.schuifwanden, alt: "Glazen schuifwanden" },
+        ]}
+      >
+        <p>In Klazienaveen hebben we deze woning voorzien van kunststof kozijnen.</p>
+      </SectionProjectImages>
+
+      <p class="sx-label" id="regio">SectionRegio</p>
+      <SectionRegio items={REGIOS} />
+
+      <p class="sx-label" id="links">SectionLinks</p>
+      <SectionLinks links={HANDIGE_LINKS} />
+
+      <p class="sx-label" id="contact">SectionContact — dark + invert formulier</p>
+      <SectionContact heading="Laten we starten met jouw project!">
+        <p>
+          Ben je enthousiast geworden, of wil je gewoon weten wat ik voor je kan doen? Neem
+          dan snel contact op, via de <a href={`mailto:${SITE.email}`}>mail</a>,
+          <a href={SITE.phoneHref}>bel mij,</a> of vul het formulier hiernaast in!
+        </p>
+      </SectionContact>
+
+      <p class="sx-label" id="hero-utility">HeroUtility — 404 / 401</p>
+      <div class="sx-utility">
+        <HeroUtility title="Pagina niet gevonden" text="Deze pagina bestaat niet (meer)." />
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .sx-intro {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: var(--size--4rem) var(--site--margin) var(--size--3rem);
+  }
+  .sx-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+  .sx-index {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 0.2rem 2rem;
+    font-size: 0.8rem;
+  }
+  .sx-index a {
+    text-decoration: underline;
+  }
+  .sx-index span {
+    opacity: 0.45;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.7rem;
+  }
+  /* Sticky labeltje tussen de secties zodat je ziet waar je naar kijkt. */
+  .sx-label {
+    position: sticky;
+    top: calc(var(--nav--height) + 1rem);
+    z-index: 500;
+    margin: 0;
+    padding: 0.4rem var(--site--margin);
+    background: var(--swatch--brand);
+    color: var(--swatch--light-100);
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.7rem;
+    text-transform: none;
+    scroll-margin-top: calc(var(--nav--height) + 1rem);
+  }
+  .sx-contact-items {
+    grid-column-gap: var(--size--1rem);
+    grid-row-gap: var(--size--1rem);
+    display: flex;
+  }
+  .sx-utility [data-theme],
+  .sx-utility .hero_utility-page_contain {
+    min-height: 30rem;
+  }
+  @media screen and (max-width: 479px) {
+    .sx-contact-items {
+      flex-flow: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+  }
+</style>

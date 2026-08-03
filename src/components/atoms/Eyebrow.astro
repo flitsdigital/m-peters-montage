@@ -1,0 +1,56 @@
+---
+/**
+ * Eyebrow-label boven sectiekoppen: klein blokje in PP Supply Sans met icoon.
+ * `variant="secondary"` gebruikt de secundaire achtergrond (is-secondary).
+ *
+ * Het origineel gebruikt 4 iconen: contact, diensten, reviews en een
+ * default (ster) voor al het overige.
+ */
+import Icon, { type IconName } from "./Icon.astro";
+
+interface Props {
+  text: string;
+  icon?: IconName;
+  variant?: "primary" | "secondary";
+}
+
+const { text, icon = "eyebrow-default", variant = "primary" } = Astro.props;
+---
+
+<div class:list={["eyebrow_layout", variant === "secondary" && "is-secondary"]}>
+  <div class="eyebrow_icon-wrap"><Icon name={icon} /></div>
+  <div class="eyebrow_text">{text}</div>
+</div>
+
+<style>
+  .eyebrow_layout {
+    padding: var(--size--0-5rem) var(--size--0-75rem);
+    grid-column-gap: var(--size--0-25rem);
+    grid-row-gap: var(--size--0-25rem);
+    background-color: var(--theme--background);
+    font-family: var(--font--secondary-family);
+    font-size: var(--size--0-75rem);
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: 700;
+    display: inline-flex;
+  }
+
+  .eyebrow_layout.is-secondary {
+    background-color: var(--theme--background-secondary);
+  }
+
+  .eyebrow_icon-wrap {
+    width: var(--size--0-75rem);
+    height: var(--size--0-75rem);
+    opacity: 0.8;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+
+  .eyebrow_text {
+    opacity: 0.8;
+    text-transform: uppercase;
+  }
+</style>

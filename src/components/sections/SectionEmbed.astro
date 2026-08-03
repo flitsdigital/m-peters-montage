@@ -1,0 +1,31 @@
+---
+/**
+ * Sectie met code van een externe partij (op deze site: de
+ * Kleurmonster-widget op de Keralit-pagina).
+ *
+ * De HTML komt uit de CMS en wordt ongefilterd gerenderd — alleen redacteuren
+ * met Studio-toegang kunnen hier iets neerzetten.
+ */
+import SectionShell from "./SectionShell.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Props {
+  html?: string;
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const { html, paddingTop = "main", paddingBottom = "main" } = Astro.props;
+---
+
+{
+  html && (
+    <SectionShell name="section_embed" theme="inherit" {paddingTop} {paddingBottom}>
+      <div class="u-grid-desktop">
+        <div class="u-column-centered">
+          <Fragment set:html={html} />
+        </div>
+      </div>
+    </SectionShell>
+  )
+}

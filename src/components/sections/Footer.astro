@@ -1,0 +1,97 @@
+---
+/**
+ * Footer (footer-new): vijf linkkolommen + een balk met copyright en de
+ * FLITS-credit.
+ */
+import Logo from "../atoms/Logo.astro";
+import FlitsLogo from "../atoms/FlitsLogo.astro";
+import FooterLinkGroup from "../molecules/FooterLinkGroup.astro";
+import { FOOTER_COLUMNS } from "../../data/navigation";
+import { SITE } from "../../data/site";
+
+const year = 2026;
+---
+
+<article data-theme="inherit" class="footer-new">
+  <div data-padding-bottom="large" data-padding-top="large" class="u-container">
+    <div class="footer_grid">
+      {
+        FOOTER_COLUMNS.map((col, index) => (
+          <div class="u-column-2">
+            <FooterLinkGroup header={col.header} links={col.links}>
+              {index === 0 && (
+                <a href="/" aria-label="ga naar home" slot="top">
+                  <Logo variant="footer" />
+                </a>
+              )}
+            </FooterLinkGroup>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="footer-new_bottom">
+    <div
+      data-padding-bottom="none"
+      data-padding-top="none"
+      class="footer-new_bottom-w u-container"
+    >
+      <div class="footer_header">©{year} {SITE.name.replace("M. ", "M ")}</div>
+      <FlitsLogo />
+    </div>
+  </div>
+</article>
+
+<style>
+  .footer-new {
+    margin-top: 1rem;
+  }
+
+  .footer_grid {
+    justify-content: space-between;
+    display: flex;
+  }
+
+  .footer-new_bottom {
+    background-color: var(--theme--background-secondary);
+    height: 3.5rem;
+  }
+
+  .footer-new_bottom-w {
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+  }
+
+  .footer_header {
+    font-family: var(--font--secondary-family);
+    color: #8d918d;
+    text-transform: uppercase;
+    margin-bottom: -3px;
+    font-size: 0.85rem;
+  }
+
+  @media screen and (max-width: 479px) {
+    .footer_grid {
+      grid-column-gap: 1rem;
+      grid-row-gap: 1rem;
+      flex-flow: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .footer-new_bottom {
+      height: auto;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .footer-new_bottom-w {
+      grid-column-gap: 0.5rem;
+      grid-row-gap: 0.5rem;
+      flex-flow: column;
+    }
+  }
+</style>

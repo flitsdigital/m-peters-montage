@@ -1,0 +1,200 @@
+---
+/**
+ * Contactformulier. Post naar /api/contact, dat doorstuurt naar de
+ * n8n-webhook (besluit Checkpoint 0). Zonder JS werkt de POST ook — de
+ * endpoint redirect dan terug met ?verzonden=1.
+ *
+ * Succes-/foutmelding komen 1-op-1 uit het origineel
+ * (form_main_success_wrap / form_main_error_wrap).
+ */
+import Button from "../atoms/Button.astro";
+import FormField from "../atoms/FormField.astro";
+
+interface Props {
+  /** Kop boven het formulier; verdwijnt mee met het formulier na verzenden. */
+  formHeading?: string;
+  diensten?: string[];
+}
+
+const {
+  formHeading,
+  diensten = [
+    "Kunststof Kozijnen",
+    "Veranda's",
+    "Zonwering",
+    "Glazen Schuifwanden",
+    "Rolluiken",
+  ],
+} = Astro.props;
+
+const status = Astro.url.searchParams.get("verzonden");
+---
+
+<div
+  class="form_main_wrap"
+  data-state={status === "1" ? "sent" : status === "0" ? "error" : "idle"}
+>
+  {formHeading && (
+    <div class="u-mb-4 form_heading"><h3>{formHeading}</h3></div>
+  )}
+
+  <form
+    method="POST"
+    action="/api/contact"
+    class="form_main_list u-block-gap-vertical"
+    data-contact-form
+  >
+    <div class="u-grid-column-2">
+      <FormField label="Voornaam" name="Naam" placeholder="Michael" required />
+      <FormField label="Woonplaats" name="Woonplaats" placeholder="Klazienaveen" required />
+    </div>
+    <div class="u-grid-column-2">
+      <FormField
+        kind="email"
+        label="Email"
+        name="Email"
+        placeholder="michael@gmail.com"
+        required
+      />
+      <FormField
+        kind="tel"
+        label="Telefoonnummer"
+        name="Telefoonnummer"
+        placeholder="06 12 34 56 78"
+      />
+    </div>
+    <FormField
+      kind="select"
+      label="In welke dienst heb je interesse?"
+      name="Diensten"
+      placeholder="Kies een!"
+      labelWeight="medium"
+      options={diensten}
+    />
+    <FormField
+      kind="textarea"
+      label="Bericht"
+      name="Bericht"
+      placeholder="Jouw bericht"
+      labelWeight="medium"
+      required
+    />
+    <Button label="Verstuur" type="submit" icon="arrow-right" />
+  </form>
+
+  <div class="form_success" data-form-success>
+    <div class="form_success_badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="100%" fill="none">
+        <path
+          d="M4 12.5L9.5 18L20 6.5"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="square"></path>
+      </svg>
+    </div>
+    <h3 class="u-text-style-h3">Bedankt voor je bericht!</h3>
+    <p>Ik heb je aanvraag ontvangen en neem zo snel mogelijk contact met je op.</p>
+  </div>
+
+  <div class="form_main_error_wrap" hidden={status !== "0"} data-form-error>
+    <div class="form_main_error_text">
+      Er ging iets mis bij het versturen. Mail of bel ons gerust direct.
+    </div>
+  </div>
+</div>
+
+<script>
+  // Async submit zodat de pagina niet herlaadt; zonder JS doet de POST het werk.
+  document
+    .querySelectorAll<HTMLFormElement>("form[data-contact-form]")
+    .forEach((form) => {
+      const wrap = form.parentElement!;
+      const success = wrap.querySelector<HTMLElement>("[data-form-success]")!;
+      const error = wrap.querySelector<HTMLElement>("[data-form-error]")!;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        error.hidden = true;
+
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) throw new Error(String(response.status));
+          // Wrapper naar 'sent': CSS verbergt het formulier en toont de
+          // bevestiging in plaats daarvan.
+          wrap.dataset.state = "sent";
+          success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } catch {
+          error.hidden = false;
+        }
+      });
+    });
+</script>
+
+<style>
+  .form_main_wrap {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  /* Meer lucht tussen de velden dan het origineel (--space--6 / 2rem): de
+     zwevende chip-labels steken boven hun veld uit, waardoor 2rem optisch
+     te krap oogt. */
+  .form_main_list {
+    --gap: var(--space--8);
+  }
+
+  /* Ook tussen de twee kolommen als die op mobiel onder elkaar vallen. */
+  .form_main_list :global(.u-grid-column-2) {
+    row-gap: var(--space--8);
+  }
+
+  /* ---- succes: formulier weg, bevestiging in de plaats ---- */
+
+  /* Het formulier heeft display:block via .u-block-gap-vertical; daarom een
+     specifieke override i.p.v. het hidden-attribuut. */
+  .form_main_wrap[data-state="sent"] .form_main_list,
+  .form_main_wrap[data-state="sent"] .form_heading {
+    display: none;
+  }
+
+  .form_success {
+    display: none;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--space--4);
+  }
+
+  .form_main_wrap[data-state="sent"] .form_success {
+    display: flex;
+  }
+
+  .form_success_badge {
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0.85rem;
+    color: var(--swatch--light-100);
+    background-color: var(--swatch--brand);
+    border-radius: var(--radius--round);
+  }
+
+  .form_success h3 {
+    margin: 0;
+  }
+
+  .form_success p {
+    margin: 0;
+    color: color-mix(in srgb, var(--theme--text) 70%, transparent);
+    max-width: 32ch;
+  }
+
+  .form_main_error_wrap {
+    border: var(--border-width--main) solid var(--theme--border);
+    background-color: #0000;
+    margin-top: 0;
+    padding: 0.8rem 1.4rem;
+  }
+</style>

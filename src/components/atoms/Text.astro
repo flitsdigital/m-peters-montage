@@ -1,0 +1,15 @@
+---
+/**
+ * Lopende tekst in de drie tekststijlen. `main` is de default paragraaf
+ * (element-styling uit base.css, geen extra class).
+ */
+interface Props {
+  size?: "main" | "large" | "small";
+  as?: "p" | "div" | "span";
+  class?: string;
+}
+
+const { size = "main", as: Tag = "p", class: cls } = Astro.props;
+---
+
+<Tag class:list={[size !== "main" && `u-text-style-${size}`, cls]}><slot /></Tag>

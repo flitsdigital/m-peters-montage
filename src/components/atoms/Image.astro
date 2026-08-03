@@ -1,0 +1,46 @@
+---
+/**
+ * Beeld-atom. Lokale assets (import → ImageMetadata) gaan door astro:assets
+ * voor responsive varianten; strings (CDN/Sanity-URL's) renderen als <img>.
+ * `cover` reproduceert g_visual_img (absolute vullend, object-fit cover).
+ */
+import { Image as AstroImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  loading?: "lazy" | "eager";
+  sizes?: string;
+  widths?: number[];
+  cover?: boolean;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  loading = "lazy",
+  sizes = "100vw",
+  widths = [500, 800, 1080, 1600, 2048],
+  cover = false,
+  class: cls,
+} = Astro.props;
+
+const classes = [cover && "g_visual_img u-cover-absolute", cls];
+---
+
+{
+  typeof src === "string" ? (
+    <img {src} {alt} {loading} class:list={classes} />
+  ) : (
+    <AstroImage
+      {src}
+      {alt}
+      {loading}
+      {sizes}
+      widths={widths.filter((w) => w <= src.width)}
+      class:list={classes}
+    />
+  )
+}

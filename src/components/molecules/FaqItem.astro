@@ -1,0 +1,100 @@
+---
+/**
+ * Accordeon-item (faq_item). Native <details>/<summary> — geen JS nodig voor
+ * het openklappen, wel voor de hoogte-animatie en het "één tegelijk open"-
+ * gedrag (zie SectionFaq).
+ *
+ * Het origineel gebruikt divs + GSAP; details/summary geeft hetzelfde beeld
+ * met toetsenbordbediening en werkt ook zonder JS.
+ */
+import Icon from "../atoms/Icon.astro";
+
+interface Props {
+  question: string;
+  /** Naam van de radiogroep zodat maar één item per groep open staat. */
+  group?: string;
+}
+
+const { question, group } = Astro.props;
+---
+
+<details class="faq_item" name={group}>
+  <summary class="faq_title">
+    <div class="u-text-style-h6">{question}</div>
+    <div class="faq_title-icon">
+      <Icon name="plus" />
+      <div class="faq_title-icon_bg"></div>
+    </div>
+  </summary>
+  <div class="faq_answer-wrap">
+    <div class="faq_paragraph"><slot /></div>
+  </div>
+</details>
+
+<style>
+  .faq_item {
+    background-color: var(--theme--background-secondary);
+  }
+
+  .faq_title {
+    padding: var(--size--1-5rem) var(--size--2rem);
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq_title::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq_title-icon {
+    width: var(--size--2rem);
+    height: var(--size--2rem);
+    padding: var(--size--0-5rem);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+    flex: none;
+  }
+
+  /* Het icoon ligt boven zijn achtergrondblokje; dat blokje krimpt bij hover. */
+  .faq_title-icon :global(svg) {
+    z-index: 3;
+    position: relative;
+  }
+
+  .faq_title-icon_bg {
+    background-color: var(--theme--background);
+    position: absolute;
+    inset: 0%;
+    transition: var(--animation-fast);
+  }
+
+  .faq_item:hover .faq_title-icon_bg {
+    transform: scale(0.8);
+  }
+
+  /* Plus roteert naar een kruis bij openen. */
+  .faq_title-icon :global(svg) {
+    transition: transform 0.7s;
+  }
+
+  .faq_item[open] .faq_title-icon :global(svg) {
+    transform: rotate(45deg);
+  }
+
+  .faq_answer-wrap {
+    padding-right: var(--size--2rem);
+    padding-left: var(--size--2rem);
+    overflow: hidden;
+  }
+
+  .faq_paragraph {
+    padding-bottom: var(--size--1-5rem);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+/**
+ * Kruimelpad in de header (breadcrumbs_wrapper). Het laatste item is de
+ * huidige pagina (vet, aria-current); de rest krijgt 60% opacity en een "/".
+ */
+interface Crumb {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs_wrapper" aria-label="Kruimelpad">
+  <div class="breadcrumbs_slot">
+    {
+      items.map((c, i) => (
+        <a
+          href={c.href}
+          class="breadcrumbs_item"
+          aria-current={i === items.length - 1 ? "page" : undefined}
+        >
+          {c.label}
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  .breadcrumbs_wrapper {
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+  }
+
+  .breadcrumbs_slot {
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+
+  .breadcrumbs_item {
+    text-decoration: none;
+  }
+
+  .breadcrumbs_item:not(:last-child) {
+    opacity: 0.6;
+  }
+
+  .breadcrumbs_item:not(:last-child)::after {
+    content: "/";
+    margin-left: 0.5rem;
+  }
+
+  .breadcrumbs_item:last-child {
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 479px) {
+    .breadcrumbs_slot {
+      grid-column-gap: 0rem;
+      grid-row-gap: 0rem;
+      flex-flow: column;
+    }
+  }
+</style>

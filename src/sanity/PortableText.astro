@@ -1,0 +1,23 @@
+---
+/**
+ * Portable Text → HTML met de opmaak van `.u-rich-text` (zie base.css).
+ * Alleen de blokken die de content daadwerkelijk gebruikt zijn overschreven;
+ * de rest laat astro-portabletext met zijn defaults renderen.
+ */
+import { PortableText as BasePortableText } from "astro-portabletext";
+import PortableLink from "./PortableLink.astro";
+import PortableImage from "./PortableImage.astro";
+
+interface Props {
+  value: unknown;
+}
+
+const { value } = Astro.props;
+
+const components = {
+  type: { image: PortableImage },
+  mark: { link: PortableLink },
+};
+---
+
+{value && <BasePortableText {value} {components} />}

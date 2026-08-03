@@ -1,0 +1,19 @@
+---
+/** Losse afbeelding binnen rich text. */
+import type { Props as $ } from "astro-portabletext/types";
+import { urlFor } from "./client";
+
+type Props = $<{ _type: "image"; alt?: string; asset?: unknown }>;
+
+const { node } = Astro.props;
+const src = node.asset ? urlFor(node as any).width(1200).url() : undefined;
+---
+
+{src && <img {src} alt={node.alt ?? ""} loading="lazy" />}
+
+<style>
+  img {
+    height: auto;
+    margin-block: var(--space--5);
+  }
+</style>

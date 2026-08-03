@@ -1,0 +1,83 @@
+/* ============================================================================
+   THEMES — laag 2 (semantische tokens)
+   Themes worden gezet met het attribuut data-theme, niet met een class.
+   Waarden: light | dark | invert | inherit.
+
+   - invert  → flipt relatief t.o.v. de dichtstbijzijnde parent-theme
+   - inherit → doet géén remap, erft de kleuren van boven
+   ========================================================================= */
+
+/* --- light ---------------------------------------------------------------- */
+:root,
+[data-theme="light"],
+[data-theme="dark"] [data-theme="invert"] {
+  --theme--background: var(--swatch--light-100);
+  --theme--background-secondary: var(--swatch--light-80);
+  --theme--text: var(--swatch--dark-100);
+  --theme--border: var(--swatch--light-60);
+
+  /* button — primary */
+  --button--background: var(--swatch--brand);
+  --button--text: var(--swatch--light-100);
+  --button--border: var(--swatch--brand);
+  --button--background-hover: var(--swatch--dark);
+  --button--text-hover: var(--swatch--light);
+  --button--border-hover: var(--swatch--dark);
+
+  /* button — secondary */
+  --button-secondary--background: var(--swatch--transparent);
+  --button-secondary--text: var(--swatch--dark);
+  --button-secondary--border: var(--swatch--dark-faded);
+  --button-secondary--background-hover: var(--swatch--dark);
+  --button-secondary--text-hover: var(--swatch--light);
+  --button-secondary--border-hover: var(--swatch--dark);
+}
+
+/* --- dark ----------------------------------------------------------------- */
+[data-theme="dark"],
+[data-theme="invert"],
+[data-theme="light"] [data-theme="invert"] {
+  --theme--background: var(--swatch--dark-100);
+  --theme--background-secondary: var(--swatch--dark-80);
+  --theme--text: var(--swatch--light-100);
+  --theme--border: var(--swatch--light-faded);
+
+  /* button — primary */
+  --button--background: var(--swatch--brand);
+  --button--text: var(--swatch--light-100);
+  --button--border: var(--swatch--brand);
+  --button--background-hover: var(--swatch--light);
+  --button--text-hover: var(--swatch--dark);
+  --button--border-hover: var(--swatch--light);
+
+  /* button — secondary */
+  --button-secondary--background: var(--swatch--light-faded);
+  --button-secondary--text: var(--swatch--light);
+  --button-secondary--border: var(--swatch--light-faded);
+  --button-secondary--background-hover: var(--swatch--light);
+  --button-secondary--text-hover: var(--swatch--dark);
+  --button-secondary--border-hover: var(--swatch--light);
+}
+
+/* --- button style switch --------------------------------------------------- */
+[data-button-style="secondary"] {
+  --button--background: var(--button-secondary--background);
+  --button--text: var(--button-secondary--text);
+  --button--border: var(--button-secondary--border);
+  --button--background-hover: var(--button-secondary--background-hover);
+  --button--text-hover: var(--button-secondary--text-hover);
+  --button--border-hover: var(--button-secondary--border-hover);
+}
+
+/* --- kleuren toepassen ------------------------------------------------------
+   `c` is een niet-bestaande tagnaam; puur een specificity-hack uit het origineel.
+   1-op-1 overgenomen omdat de cascade eraan hangt.
+   -------------------------------------------------------------------------- */
+:is(c, :where([data-theme]:not([data-theme="inherit"]))) {
+  background-color: var(--theme--background);
+  color: var(--theme--text);
+}
+
+[data-background="secondary"] {
+  background-color: var(--theme--background-secondary) !important;
+}

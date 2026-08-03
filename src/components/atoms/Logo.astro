@@ -1,0 +1,36 @@
+---
+/**
+ * Het M. Peters-logo (SVG, currentColor + twee accenten in --swatch--brand).
+ * `variant` bepaalt alleen de breedte: nav 7rem (5rem mobiel), footer 10rem.
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  variant?: "nav" | "footer";
+}
+
+const { variant = "nav" } = Astro.props;
+---
+
+<span class:list={["logo", `is-${variant}`]}><Icon name="logo" /></span>
+
+<style>
+  .logo {
+    display: inline-block;
+    line-height: 0;
+  }
+
+  .logo.is-nav {
+    width: 7rem;
+  }
+
+  .logo.is-footer {
+    width: 10rem;
+  }
+
+  @media screen and (max-width: 479px) {
+    .logo.is-nav {
+      width: 5rem;
+    }
+  }
+</style>

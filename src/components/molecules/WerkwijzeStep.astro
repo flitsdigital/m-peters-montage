@@ -1,0 +1,45 @@
+---
+/**
+ * Stap in de werkwijze (werkwijze_item): titel + tekst boven, een groot
+ * doorschijnend nummer onder. `variant="center"` (is-center) laat het nummer weg.
+ */
+interface Props {
+  title: string;
+  text?: string;
+  number?: string;
+  variant?: "default" | "center";
+}
+
+const { title, text, number, variant = "default" } = Astro.props;
+---
+
+<div class:list={["werkwijze_item", variant === "center" && "is-center"]}>
+  <div>
+    <h3>{title}</h3>
+    {text && <p>{text}</p>}
+  </div>
+  {number && <div class="werkwijze_number">{number}</div>}
+</div>
+
+<style>
+  .werkwijze_item {
+    padding: var(--size--2rem);
+    background-color: var(--theme--background-secondary);
+    flex-flow: column;
+    justify-content: space-between;
+    display: flex;
+  }
+
+  .werkwijze_item.is-center {
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .werkwijze_number {
+    margin-top: var(--size--1rem);
+    font-family: var(--font--secondary-family);
+    color: color-mix(in srgb, var(--theme--text) 5%, transparent 90%);
+    font-size: 12vw;
+    line-height: 1;
+  }
+</style>

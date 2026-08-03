@@ -1,0 +1,61 @@
+/* ============================================================================
+   FONTS
+   .ttf/.otf uit het Webflow-export omgezet naar .woff2 (467 kB → 171 kB).
+   Metrics zijn identiek; alleen de container verandert.
+   ========================================================================= */
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-BookItalic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Nexa;
+  src: url("/fonts/Nexa-BlackItalic.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Supply Sans";
+  src: url("/fonts/PPSupplySans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

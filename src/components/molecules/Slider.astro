@@ -1,0 +1,271 @@
+---
+/**
+ * Swiper-slider met de exacte opties uit het origineel. Twee varianten:
+ *
+ * - reviews:   loop, grabCursor, centeredSlides, autoplay 8000ms,
+ *              breakpoints 320:1/16 · 480:1.5/24 · 640:2.5/24,
+ *              clickable pagination + custom prev/next-knoppen
+ * - projecten: loop, centeredSlides, autoplay 3000ms,
+ *              breakpoints 320:1/24 · 480:2/24 · 640:4/24, pagination
+ *
+ * De slides komen via de default slot; elk kind moet zelf .swiper-slide zijn.
+ */
+import Icon from "../atoms/Icon.astro";
+
+interface Props {
+  variant: "reviews" | "projecten";
+  /** Toegankelijk label voor de slider-regio. */
+  label: string;
+}
+
+const { variant, label } = Astro.props;
+const withNav = variant === "reviews";
+---
+
+<div
+  class:list={["swiper", `is-${variant}`]}
+  data-slider={variant}
+  role="region"
+  aria-label={label}
+  aria-roledescription="carousel"
+>
+  <div class:list={["swiper-wrapper", variant === "reviews" && "is-reviews"]}>
+    <slot />
+  </div>
+
+  <div class="swiper-pagination"></div>
+
+  {
+    withNav && (
+      <Fragment>
+        <div class="swiper-button-wrap">
+          <button type="button" class="swiper-button-previous" aria-label="Vorige">
+            <div class="swiper-icon-wrap">
+              <Icon name="arrow-right" class="swiper-icon-left" />
+              <Icon name="arrow-right" class="swiper-icon-left-duplicate" />
+            </div>
+          </button>
+        </div>
+        <div class="swiper-button-wrap is-right">
+          <button type="button" class="swiper-button-forward" aria-label="Volgende">
+            <div class="swiper-icon-wrap">
+              <Icon name="arrow-right" class="swiper-icon-right" />
+              <Icon name="arrow-right" class="swiper-icon-right-duplicate" />
+            </div>
+          </button>
+        </div>
+      </Fragment>
+    )
+  }
+</div>
+
+<script>
+  // Statisch: Swiper exporteert de modules alleen als één barrel, dus alleen
+  // een statische import laat Rollup de ongebruikte modules weggooien.
+  import { Autoplay, Navigation, Pagination } from "swiper/modules";
+
+  const CONFIG = {
+    reviews: {
+      loop: true,
+      grabCursor: true,
+      centeredSlides: true,
+      autoplay: { delay: 8000 },
+      breakpoints: {
+        320: { slidesPerView: 1, spaceBetween: 16 },
+        480: { slidesPerView: 1.5, spaceBetween: 24 },
+        640: { slidesPerView: 2.5, spaceBetween: 24 },
+      },
+    },
+    projecten: {
+      loop: true,
+      centeredSlides: true,
+      autoplay: { delay: 3000 },
+      breakpoints: {
+        320: { slidesPerView: 1, spaceBetween: 24 },
+        480: { slidesPerView: 2, spaceBetween: 24 },
+        640: { slidesPerView: 4, spaceBetween: 24 },
+      },
+    },
+  } as const;
+
+  /**
+   * Swiper is ~80 kB en elke slider staat onder de vouw. Daarom pas laden
+   * zodra er één in de buurt van het scherm komt.
+   */
+  async function init(el: HTMLElement) {
+    const [{ default: Swiper }] = await Promise.all([
+      import("swiper"),
+      import("swiper/css"),
+      import("swiper/css/navigation"),
+      import("swiper/css/pagination"),
+    ]);
+
+    const variant = el.dataset.slider as keyof typeof CONFIG;
+    new Swiper(el, {
+      modules: [Autoplay, Navigation, Pagination],
+      ...CONFIG[variant],
+      pagination: { el: el.querySelector(".swiper-pagination"), clickable: true },
+      navigation: {
+        nextEl: el.querySelector(".swiper-button-forward"),
+        prevEl: el.querySelector(".swiper-button-previous"),
+      },
+    });
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        init(entry.target as HTMLElement);
+      }
+    },
+    { rootMargin: "200px" },
+  );
+
+  document.querySelectorAll<HTMLElement>("[data-slider]").forEach((el) => observer.observe(el));
+</script>
+
+<style is:global>
+  .swiper {
+    position: relative;
+  }
+
+  .swiper-slide.is-project,
+  .swiper-slide.is-reviews,
+  .swiper-slide {
+    height: auto !important;
+  }
+
+  /* pagination — vierkante streepjes, actieve wordt 3× breed en rood.
+     De selector moet specifieker zijn dan Swiper's eigen
+     `.swiper-horizontal > .swiper-pagination-bullets` (0,2,0), anders blijft
+     de balk absoluut over de slides liggen in plaats van eronder. */
+  .swiper > .swiper-pagination,
+  .swiper-horizontal > .swiper-pagination-bullets {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    top: auto;
+    width: 100%;
+  }
+
+  /* Swiper's eigen `.swiper-pagination-bullet { border-radius: 50% }` heeft
+     dezelfde specificity; met `.swiper` ervoor wint de vierkante variant. */
+  .swiper .swiper-pagination-bullet {
+    border-radius: 0;
+    background: #c0c1c0;
+    opacity: 1;
+    transition: var(--animation-smooth);
+  }
+
+  .swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background: var(--swatch--brand);
+    width: calc(
+      var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 8px)) * 3
+    );
+    opacity: 1;
+  }
+
+  /* Swiper's default is `align-items: stretch` op de wrapper; zonder deze
+     regel rekken slides met verschillende hoogtes de bullets/knoppen mee. */
+  .swiper-wrapper {
+    align-items: stretch;
+  }
+
+  /* nav-knoppen: de pijl schuift weg, de duplicaat schuift erin */
+  .swiper-button-wrap {
+    z-index: 50;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: absolute;
+    inset: 0% auto 0% 0%;
+  }
+
+  .swiper-button-wrap.is-right {
+    inset: 0% 0% 0% auto;
+  }
+
+  .swiper-button-previous,
+  .swiper-button-forward {
+    width: 3rem;
+    height: 3rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    background-color: var(--theme--background-secondary);
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    overflow: hidden;
+    transition: var(--animation-fast);
+  }
+
+  .swiper-button-previous {
+    margin-left: var(--size--1rem);
+  }
+
+  .swiper-button-forward {
+    margin-right: var(--size--1rem);
+  }
+
+  /* FIX (FIDELITY.md): in het origineel stond hier "transform scale(1.1)"
+     zonder dubbele punt, waardoor de regel niets deed. */
+  .swiper-button-previous:hover,
+  .swiper-button-forward:hover {
+    transform: scale(1.1);
+  }
+
+  .swiper-icon-wrap {
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+  }
+
+  .swiper-icon-left,
+  .swiper-icon-right,
+  .swiper-icon-left-duplicate,
+  .swiper-icon-right-duplicate {
+    transition: var(--animation-smooth);
+  }
+
+  .swiper-icon-left {
+    transform: rotate(180deg);
+  }
+
+  .swiper-icon-left-duplicate {
+    position: absolute;
+    inset: 0%;
+    transform: rotate(180deg) translate(-2.5rem);
+  }
+
+  .swiper-icon-right-duplicate {
+    position: absolute;
+    inset: 0%;
+    transform: translate(-2.5rem);
+  }
+
+  .swiper-button-previous:hover .swiper-icon-left {
+    transform: rotate(180deg) translateX(-2.5rem);
+  }
+
+  .swiper-button-previous:hover .swiper-icon-left-duplicate {
+    transform: rotate(180deg) translateX(0);
+  }
+
+  .swiper-button-forward:hover .swiper-icon-right {
+    transform: translateX(2.5rem);
+  }
+
+  .swiper-button-forward:hover .swiper-icon-right-duplicate {
+    transform: translateX(0);
+  }
+
+  @media screen and (max-width: 479px) {
+    .swiper-button-wrap {
+      display: none;
+      position: absolute;
+    }
+  }
+</style>

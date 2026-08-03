@@ -1,0 +1,77 @@
+---
+/**
+ * Contactsectie (section_contact) — op 31 pagina's de afsluiter.
+ * Dark sectie met een secundaire achtergrondlaag, een `divider` die de
+ * overgang naar de footer maakt, tekst links op kolom 2–5 en het formulier
+ * rechts als `invert`-blok (dus licht).
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+import Divider from "../atoms/Divider.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import ContactForm from "../molecules/ContactForm.astro";
+import type { IconName } from "../atoms/Icon.astro";
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName };
+  formHeading?: string;
+}
+
+const {
+  heading,
+  eyebrow = { text: "Contact", icon: "eyebrow-contact" as IconName },
+  formHeading = "Vul het formulier in om te starten",
+} = Astro.props;
+---
+
+<SectionShell
+  name="section_contact"
+  theme="dark"
+  paddingTop="main"
+  paddingBottom="none"
+>
+  <Fragment slot="before">
+    <div class="background_secondary"></div>
+    <Divider theme="dark" />
+  </Fragment>
+
+  <div class="u-grid-desktop">
+    <div class="contact_content u-column-custom">
+      {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} />}
+      <h2>{heading}</h2>
+      <RichText><slot /></RichText>
+    </div>
+
+    <div data-theme="invert" class="contact_component u-column-custom">
+      <ContactForm {formHeading} />
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_contact) {
+    background-color: #0000;
+  }
+
+  .contact_content {
+    grid-column: 2 / span 4;
+  }
+
+  .contact_component {
+    min-height: 30rem;
+    padding: var(--size--3rem);
+    background-color: var(--theme--background-secondary);
+    grid-column: 7 / span 7;
+    /* Cutouts van de submit-button liggen op de secundaire achtergrond. */
+    --cutout-background: var(--theme--background-secondary);
+  }
+
+  @media screen and (max-width: 479px) {
+    .contact_component {
+      min-height: auto;
+      padding-right: var(--size--2rem);
+      padding-left: var(--size--2rem);
+    }
+  }
+</style>

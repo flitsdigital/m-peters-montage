@@ -1,0 +1,28 @@
+---
+/**
+ * Themalaag over de onderste 25% van een sectie (class "divider") —
+ * gebruikt in section_contact om de overgang naar de zwarte footer te maken.
+ * Verdwijnt op mobiel, net als in het origineel.
+ */
+interface Props {
+  theme?: "dark" | "light";
+}
+
+const { theme = "dark" } = Astro.props;
+---
+
+<div data-theme={theme} class="divider"></div>
+
+<style>
+  .divider {
+    height: 25%;
+    position: absolute;
+    inset: auto 0% 0%;
+  }
+
+  @media screen and (max-width: 479px) {
+    .divider {
+      display: none;
+    }
+  }
+</style>

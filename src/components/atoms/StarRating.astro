@@ -1,0 +1,31 @@
+---
+/**
+ * Rij sterren in de brandkleur (reviews_stars-wrap). Overal op de site 5.
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  count?: number;
+}
+
+const { count = 5 } = Astro.props;
+---
+
+<div class="reviews_stars-wrap" role="img" aria-label={`${count} van 5 sterren`}>
+  {Array.from({ length: count }, () => <Icon name="star" class="reviews_star" />)}
+</div>
+
+<style>
+  .reviews_stars-wrap {
+    grid-column-gap: var(--size--0-125rem);
+    grid-row-gap: var(--size--0-125rem);
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+
+  .reviews_stars-wrap :global(.reviews_star) {
+    width: 1rem;
+    color: var(--swatch--brand);
+  }
+</style>

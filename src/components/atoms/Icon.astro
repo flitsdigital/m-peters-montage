@@ -1,0 +1,49 @@
+---
+/**
+ * Inline SVG-icoon uit `src/icons/`.
+ * Alle iconen zijn 1-op-1 uit het Webflow-export geknipt (currentColor,
+ * originele viewBox). De parent bepaalt de maat; het svg vult 100% breedte.
+ */
+export type IconName =
+  | "logo"
+  | "flits"
+  | "chevron-down"
+  | "phone"
+  | "mail"
+  | "arrow-right"
+  | "arrow-diagonal"
+  | "star"
+  | "star-rounded"
+  | "quote"
+  | "plus"
+  | "arrow-simple"
+  | "facebook"
+  | "eyebrow-contact"
+  | "eyebrow-diensten"
+  | "eyebrow-default"
+  | "eyebrow-reviews"
+  | "utility-lock"
+  | "utility-mark";
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const icons = import.meta.glob<string>("../../icons/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+const { name, class: cls } = Astro.props;
+const raw = icons[`../../icons/${name}.svg`];
+if (!raw) throw new Error(`Icon "${name}" niet gevonden in src/icons/`);
+
+const svg = raw.replace(
+  "<svg",
+  `<svg width="100%" aria-hidden="true"${cls ? ` class="${cls}"` : ""}`,
+);
+---
+
+<Fragment set:html={svg} />

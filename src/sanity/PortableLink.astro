@@ -1,0 +1,15 @@
+---
+/** Link-annotatie in rich text. Externe links openen in een nieuw tabblad. */
+import type { Mark, Props as $ } from "astro-portabletext/types";
+
+type Props = $<Mark<{ href?: string; blank?: boolean }>>;
+
+const { node } = Astro.props;
+const href = node.markDef?.href ?? "#";
+const external = node.markDef?.blank || /^https?:/.test(href);
+---
+
+<a
+  {href}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener" : undefined}><slot /></a>

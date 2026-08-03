@@ -1,0 +1,41 @@
+---
+/**
+ * Vullend beeld met tintlaag (g_visual_wrap): background-tint (currentColor
+ * op 10%), cover-image en optionele zwarte overlay. Het origineel zet de
+ * overlay-opacity inline per sectie (60–70%).
+ */
+import Image from "../atoms/Image.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  loading?: "lazy" | "eager";
+  sizes?: string;
+  /** 0–1; alleen gerenderd als gezet. */
+  overlay?: number;
+}
+
+const { src, alt, loading = "lazy", sizes, overlay } = Astro.props;
+---
+
+<div class="g_visual_wrap u-cover-absolute">
+  <div class="g_visual_background u-cover-absolute"></div>
+  <Image {src} {alt} {loading} {sizes} cover />
+  {
+    overlay !== undefined && (
+      <div style={`opacity: ${overlay * 100}%;`} class="g_visual_overlay u-cover-absolute" />
+    )
+  }
+</div>
+
+<style>
+  .g_visual_background {
+    opacity: 0.1;
+    background-color: currentColor;
+  }
+
+  .g_visual_overlay {
+    background-color: #000;
+  }
+</style>

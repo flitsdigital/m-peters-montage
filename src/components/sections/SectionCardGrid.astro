@@ -1,0 +1,97 @@
+---
+/**
+ * Overzichtsgrid (section_blog-items) — /blogs, /projecten en de
+ * "meer lezen"-strook onder een blog.
+ *
+ * De twee bronnen gebruiken een andere kaart, precies zoals in het origineel:
+ * blogs krijgen de lichte BlogCard, projecten de donkere ProjectCard met
+ * tags en "MEER LEZEN"-chip.
+ */
+import SectionShell from "./SectionShell.astro";
+import BlogCard from "../molecules/BlogCard.astro";
+import ProjectCard from "../molecules/ProjectCard.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+import type { ImageMetadata } from "astro";
+
+interface Item {
+  href: string;
+  title: string;
+  summary?: string;
+  image: ImageMetadata | string;
+  alt: string;
+  tags?: string[];
+}
+
+interface Props {
+  /** Als gezet wordt er een kop boven het grid gezet (overzichtspagina's). */
+  heading?: string;
+  headingAs?: "h1" | "h2";
+  items: Item[];
+  variant?: "blog" | "project";
+  background?: "secondary";
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const {
+  heading,
+  headingAs: Tag = "h1",
+  items,
+  variant = "blog",
+  background,
+  paddingTop = "small",
+  paddingBottom = "main",
+} = Astro.props;
+---
+
+<SectionShell
+  name={background ? "section_blog-items is-secondary" : "section_blog-items"}
+  theme="inherit"
+  {paddingTop}
+  {paddingBottom}
+>
+  {
+    heading && (
+      <div class="u-mb-4">
+        <div class="u-grid-desktop">
+          <div class="u-column-6">
+            <Tag>{heading}</Tag>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="u-grid-desktop">
+    {
+      items.map((item) => (
+        <div class="u-column-4">
+          {variant === "project" ? (
+            <ProjectCard
+              href={item.href}
+              title={item.title}
+              text={item.summary}
+              image={item.image}
+              alt={item.alt}
+              tags={item.tags}
+            />
+          ) : (
+            <BlogCard
+              href={item.href}
+              title={item.title}
+              summary={item.summary}
+              image={item.image}
+              alt={item.alt}
+            />
+          )}
+        </div>
+      ))
+    }
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_blog-items.is-secondary) {
+    background-color: var(--theme--background-secondary);
+  }
+</style>

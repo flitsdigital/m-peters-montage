@@ -1,0 +1,113 @@
+---
+/**
+ * Paginakop (section_header-centered + section_content-header) — 34× op de site.
+ * Gecentreerd op 6 kolommen, met optioneel: achtergrondbeeld + overlay,
+ * kruimelpad, contactregels, eyebrow, intro en een CTA.
+ *
+ * `variant="plain"` = zonder achtergrondbeeld en zonder vaste hoogte
+ * (het originele section_content-header op /kunststof-kozijnen/regio).
+ */
+import SectionShell from "./SectionShell.astro";
+import Visual from "../molecules/Visual.astro";
+import Breadcrumbs from "../molecules/Breadcrumbs.astro";
+import Button from "../atoms/Button.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  heading: string;
+  /** Visuele stijl van de h1 — het origineel gebruikt vaak h2. */
+  headingStyle?: "h1" | "h2";
+  body?: string;
+  eyebrow?: { text: string; icon?: IconName };
+  breadcrumbs?: { label: string; href: string }[];
+  image?: ImageMetadata | string;
+  alt?: string;
+  overlay?: number;
+  cta?: { label: string; href: string };
+  variant?: "hero" | "plain";
+}
+
+const {
+  heading,
+  headingStyle = "h2",
+  body,
+  eyebrow,
+  breadcrumbs,
+  image,
+  alt = "",
+  overlay = 0.7,
+  cta,
+  variant = "hero",
+} = Astro.props;
+---
+
+<SectionShell
+  name={variant === "plain" ? "section_content-header" : "section_header-centered"}
+  theme="inherit"
+  wrapper={variant === "hero"}
+  wrapperTop={variant === "hero"}
+  containerClass={variant === "plain" ? undefined : "is-hero"}
+>
+  {image && <Visual slot="before" src={image} {alt} {overlay} sizes="100vw" />}
+
+  <div class="header-centered_layout u-grid-desktop">
+    <div
+      class:list={[
+        variant === "plain" ? "u-column-centered" : "header-centered_heading u-column-custom",
+      ]}
+    >
+      {
+        variant === "plain" ? (
+          <Fragment>
+            {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+            <h1>{heading}</h1>
+          </Fragment>
+        ) : (
+          <div class="u-vflex-center-top">
+            {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+            <slot name="above" />
+            {eyebrow && (
+              <div class="u-mb-4">
+                <Eyebrow text={eyebrow.text} icon={eyebrow.icon} />
+              </div>
+            )}
+            <div class="u-text-align-center">
+              <h1 class={`u-text-style-${headingStyle}`}>{heading}</h1>
+              {body && <p class="u-text-style-large">{body}</p>}
+            </div>
+            {cta && (
+              <div class="u-mt-4">
+                <Button label={cta.label} href={cta.href} icon="phone" cutouts={false} />
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_header-centered) {
+    height: 80svh;
+  }
+
+  .header-centered_layout {
+    height: 100%;
+  }
+
+  .header-centered_heading {
+    grid-column: 4 / span 6;
+    /* Verticaal centreren in de sectie. In Webflow zat dit in een
+       per-element #w-node-regel, niet in de class. */
+    align-self: center;
+  }
+
+  @media screen and (max-width: 479px) {
+    :global(.section_header-centered) {
+      height: 100svh;
+    }
+  }
+</style>

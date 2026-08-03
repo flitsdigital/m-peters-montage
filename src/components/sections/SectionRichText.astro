@@ -1,0 +1,44 @@
+---
+/**
+ * Volle-breedte rich text op kolom 2 t/m 11 (section_rich-text) — 32× op de site.
+ * Sommige varianten hebben een knop eronder en/of een secundaire achtergrond.
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+import Button from "../atoms/Button.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Props {
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+  background?: "secondary";
+  cta?: { label: string; href: string };
+  /** Gecentreerd op 6 kolommen i.p.v. ingesprongen over de volle breedte. */
+  align?: "indent" | "center";
+}
+
+const {
+  paddingTop = "main",
+  paddingBottom = "main",
+  background,
+  cta,
+  align = "indent",
+} = Astro.props;
+---
+
+<SectionShell name="section_rich-text" theme="inherit" {paddingTop} {paddingBottom}>
+  {background === "secondary" && <div class="background_secondary" slot="before" />}
+
+  <div class="u-grid-desktop">
+    <div class={align === "center" ? "u-column-centered" : "u-column-indent"}>
+      <RichText><slot /></RichText>
+      {
+        cta && (
+          <div class="u-mt-4">
+            <Button label={cta.label} href={cta.href} icon="phone" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</SectionShell>

@@ -1,0 +1,163 @@
+---
+import "../styles/fonts.css";
+import "../styles/tokens.css";
+import "../styles/themes.css";
+import "../styles/base.css";
+
+import { SITE } from "../data/site";
+import { stegaClean } from "@sanity/client/stega";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Pad zonder domein, bv. "/kunststof-kozijnen". */
+  canonicalPath?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+  /**
+   * Theme op <body>. Het origineel zet op élke inhoudspagina data-theme="dark";
+   * alleen 401/404 hebben geen theme. Secties zetten daarbinnen hun eigen theme.
+   */
+  theme?: "light" | "dark";
+  noindex?: boolean;
+  /** Zet analytics uit — handig op de interne review-routes. */
+  analytics?: boolean;
+  /** LocalBusiness JSON-LD meesturen (alleen op de homepage in het origineel). */
+  localBusiness?: boolean;
+}
+
+const {
+  title: rawTitle,
+  description: rawDescription = SITE.description,
+  canonicalPath,
+  ogImage = SITE.ogImage,
+  ogType = "website",
+  theme = "dark",
+  noindex = false,
+  analytics = true,
+  localBusiness = false,
+} = Astro.props;
+
+// Nooit stega-tekens in <head>: die maken titles en descriptions in Google stuk.
+const title = stegaClean(rawTitle);
+const description = stegaClean(rawDescription);
+
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, SITE.url).href.replace(
+  /\/$/,
+  "",
+);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: SITE.name,
+  image: SITE.ogImage,
+  "@id": "",
+  url: SITE.url,
+  telephone: SITE.phone,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE.address.street,
+    addressLocality: SITE.address.city,
+    postalCode: SITE.address.postalCode,
+    addressCountry: SITE.address.country,
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: SITE.geo.lat,
+    longitude: SITE.geo.lng,
+  },
+  sameAs: SITE.social.facebook,
+};
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="shortcut icon" href="/images/favicon.jpg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/webclip.jpg" />
+
+    <link
+      rel="preload"
+      href="/fonts/Nexa-Book.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/Nexa-Black.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    {
+      analytics && (
+        <Fragment>
+          <script
+            is:inline
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${SITE.analytics.ga4}`}
+          />
+          <script is:inline define:vars={{ ga4: SITE.analytics.ga4 }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("set", "developer_id.dZGVlNj", true);
+            gtag("js", new Date());
+            gtag("config", ga4);
+          </script>
+          <script is:inline define:vars={{ clarity: SITE.analytics.clarity }}>
+            (function (c, l, a, r, i, t, y) {
+              c[a] =
+                c[a] ||
+                function () {
+                  (c[a].q = c[a].q || []).push(arguments);
+                };
+              t = l.createElement(r);
+              t.async = 1;
+              t.src = "https://www.clarity.ms/tag/" + i;
+              y = l.getElementsByTagName(r)[0];
+              y.parentNode.insertBefore(t, y);
+            })(window, document, "clarity", "script", clarity);
+          </script>
+        </Fragment>
+      )
+    }
+
+    {
+      localBusiness && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd)}
+        />
+      )
+    }
+
+    <slot name="head" />
+  </head>
+
+  <body data-theme={theme}>
+    <slot />
+  </body>
+</html>

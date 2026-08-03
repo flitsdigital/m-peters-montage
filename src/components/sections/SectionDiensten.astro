@@ -1,0 +1,72 @@
+---
+/**
+ * Dienstenoverzicht (section_diensten): kop op kolom 2–7, daaronder een
+ * 3-koloms grid met dienstkaarten.
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import DienstCard from "../molecules/DienstCard.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { ImageMetadata } from "astro";
+
+interface Dienst {
+  href: string;
+  title: string;
+  text: string;
+  image: ImageMetadata | string;
+  alt: string;
+}
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  items: Dienst[];
+  id?: string;
+}
+
+const {
+  heading,
+  eyebrow = { text: "Diensten", icon: "eyebrow-diensten" as IconName, variant: "secondary" as const },
+  items,
+  id = "diensten",
+} = Astro.props;
+---
+
+<SectionShell
+  {id}
+  name="section_diensten"
+  theme="dark"
+  paddingTop="main"
+  paddingBottom="small"
+>
+  <div class="heading_layout u-grid-desktop">
+    <div class="over_content u-column-custom">
+      {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />}
+      <h2>{heading}</h2>
+      <RichText><slot /></RichText>
+    </div>
+  </div>
+
+  <div class="u-mt-8">
+    <div class="diensten_layout u-grid-column-3">
+      {
+        items.map((d) => (
+          <DienstCard
+            href={d.href}
+            title={d.title}
+            text={d.text}
+            image={d.image}
+            alt={d.alt}
+          />
+        ))
+      }
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  .over_content {
+    grid-column: 2 / span 6;
+  }
+</style>

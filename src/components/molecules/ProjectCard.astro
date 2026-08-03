@@ -1,0 +1,101 @@
+---
+/**
+ * Projectkaart in de projecten-slider (project-item): beeld met zoom-hover,
+ * "MEER LEZEN"-chip, tags, titel en een op 2 regels geklemde beschrijving.
+ * De hele kaart is klikbaar via het Clickable-patroon.
+ */
+import Clickable from "../atoms/Clickable.astro";
+import Visual from "./Visual.astro";
+import ReadMoreLink from "./ReadMoreLink.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  href: string;
+  title: string;
+  text?: string;
+  image: ImageMetadata | string;
+  alt: string;
+  tags?: string[];
+}
+
+const { href, title, text, image, alt, tags = [] } = Astro.props;
+---
+
+<div class="project-item">
+  <Clickable label={title} {href} />
+  <div class="project_visual">
+    <Visual src={image} {alt} sizes="(max-width: 991px) 100vw, 25vw" />
+  </div>
+  <div class="project_item_content">
+    <ReadMoreLink />
+    {
+      tags.length > 0 && (
+        <div class="u-mb-3">
+          <div class="project_category-list">
+            {tags.map((t) => (
+              <div class="project_category">{t}</div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+    <h3>{title}</h3>
+    {text && <p class="u-text-2lines">{text}</p>}
+  </div>
+</div>
+
+<style>
+  .project-item {
+    flex-flow: column;
+    height: 100%;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project_visual {
+    aspect-ratio: 3 / 2;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project_item_content {
+    height: auto;
+    padding: var(--size--2rem);
+    background-color: var(--theme--background-secondary);
+    flex: 1;
+    position: relative;
+  }
+
+  .project_category-list {
+    grid-column-gap: var(--size--0-75rem);
+    grid-row-gap: var(--size--0-75rem);
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+
+  .project_category {
+    font-family: var(--font--secondary-family);
+    font-size: var(--size--0-75rem);
+    text-transform: uppercase;
+    font-weight: 700;
+    display: inline-block;
+  }
+
+  .project-item :global(img) {
+    transition: transform 0.3s;
+  }
+
+  .project-item:hover :global(img) {
+    transform: scale(1.1);
+  }
+
+  .project-item:hover :global(.diensten_link-icon1) {
+    transform: translate(100%, -100%);
+  }
+
+  .project-item:hover :global(.diensten_link-icon2) {
+    transform: translate(0, 0);
+  }
+</style>

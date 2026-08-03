@@ -1,0 +1,88 @@
+---
+/**
+ * Projecten-slider (section_projecten): kop op kolom 2–7 in een container
+ * zonder top-padding, daaronder een fullbleed slider (4 slides op desktop).
+ */
+import SectionShell from "./SectionShell.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import Slider from "../molecules/Slider.astro";
+import ProjectCard from "../molecules/ProjectCard.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { ImageMetadata } from "astro";
+
+interface Project {
+  href: string;
+  title: string;
+  text?: string;
+  image: ImageMetadata | string;
+  alt: string;
+  tags?: string[];
+}
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  projects: Project[];
+  theme?: "light" | "dark" | "inherit";
+}
+
+const {
+  heading,
+  eyebrow = { text: "Projecten", variant: "secondary" as const },
+  projects,
+  theme = "inherit",
+} = Astro.props;
+---
+
+<SectionShell name="section_projecten" {theme} container={false}>
+  <div class="u-mb-8">
+    <div
+      data-padding-top="none"
+      data-padding-bottom="none"
+      class="projecten_container u-container"
+    >
+      <div class="projecten_header-layout u-grid-desktop">
+        <div class="projecten_header u-column-custom">
+          {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />}
+          <h2>{heading}</h2>
+          <slot />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-padding-bottom="none">
+    <Slider variant="projecten" label="Uitgelichte projecten">
+      {
+        projects.map((p) => (
+          <div class="swiper-slide is-project">
+            <ProjectCard
+              href={p.href}
+              title={p.title}
+              text={p.text}
+              image={p.image}
+              alt={p.alt}
+              tags={p.tags}
+            />
+          </div>
+        ))
+      }
+    </Slider>
+  </div>
+</SectionShell>
+
+<style>
+  .projecten_header {
+    grid-column: 2 / span 6;
+  }
+
+  .projecten_container {
+    padding-top: var(--section-space--none);
+  }
+
+  @media screen and (max-width: 479px) {
+    .projecten_container {
+      padding-top: var(--section-space--main);
+    }
+  }
+</style>

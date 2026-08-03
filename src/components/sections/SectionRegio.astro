@@ -1,0 +1,31 @@
+---
+/**
+ * Regio-overzicht (section_regio): 3-koloms grid met regiokaarten.
+ */
+import SectionShell from "./SectionShell.astro";
+import RegioCard from "../molecules/RegioCard.astro";
+import type { ImageMetadata } from "astro";
+
+interface Regio {
+  href: string;
+  title: string;
+  image: ImageMetadata | string;
+  alt: string;
+}
+
+interface Props {
+  items: Regio[];
+}
+
+const { items } = Astro.props;
+---
+
+<SectionShell name="section_regio" theme="inherit" paddingTop="none" paddingBottom="main">
+  <div class="u-grid-column-3">
+    {
+      items.map((r) => (
+        <RegioCard href={r.href} title={r.title} image={r.image} alt={r.alt} />
+      ))
+    }
+  </div>
+</SectionShell>

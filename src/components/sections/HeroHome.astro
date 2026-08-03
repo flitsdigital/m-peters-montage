@@ -1,0 +1,88 @@
+---
+/**
+ * Homepage-hero (section_home-hero): fullbleed beeld met overlay, sterrenrij,
+ * grote h1 en rechts-onder een paragraaf met CTA op 5 kolommen.
+ */
+import SectionShell from "./SectionShell.astro";
+import Visual from "../molecules/Visual.astro";
+import Icon from "../atoms/Icon.astro";
+import Button from "../atoms/Button.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  heading: string;
+  body: string;
+  rating?: string;
+  image: ImageMetadata | string;
+  alt: string;
+  overlay?: number;
+  cta?: { label: string; href: string };
+}
+
+const {
+  heading,
+  body,
+  rating = "Beoordeeld met 5 sterren",
+  image,
+  alt,
+  overlay = 0.6,
+  cta = { label: "Contact opnemen", href: "/contact" },
+} = Astro.props;
+---
+
+<SectionShell
+  name="section_home-hero u-hflex-left-bottom"
+  theme="dark"
+  paddingTop="main"
+  paddingBottom="main"
+>
+  <Visual slot="before" src={image} {alt} {overlay} loading="eager" sizes="100vw" />
+
+  <div class="home-hero_grid u-grid-desktop">
+    <div class="home_hero_heading-wrap u-column-7">
+      <div class="u-hflex-left-center u-gap-2">
+        <div class="u-hflex-left-center">
+          {Array.from({ length: 5 }, () => <Icon name="star-rounded" class="icon-s" />)}
+        </div>
+        <div class="u-mt-1">{rating}</div>
+      </div>
+      <h1>{heading}</h1>
+      <div class="home_hero-paragraph-wrap u-column-5">
+        <p>{body}</p>
+        <div class="u-mt-4">
+          <Button label={cta.label} href={cta.href} icon="phone" cutouts={false} />
+        </div>
+      </div>
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_home-hero) {
+    min-height: calc(90vh - 2.5rem);
+    margin: 1rem;
+  }
+
+  .home-hero_grid {
+    place-items: end stretch;
+  }
+
+  /* Ook een per-element #w-node-regel in Webflow. */
+  .home_hero-paragraph-wrap {
+    align-self: end;
+  }
+
+  .home_hero_heading-wrap :global(.icon-s) {
+    justify-content: center;
+    align-items: center;
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+  }
+
+  @media screen and (max-width: 479px) {
+    :global(.section_home-hero) {
+      margin: 0;
+    }
+  }
+</style>

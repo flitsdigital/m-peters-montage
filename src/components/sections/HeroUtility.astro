@@ -1,0 +1,57 @@
+---
+/**
+ * Utility-hero voor 404/401 (hero_utility-page_wrap): gecentreerd blok van
+ * max 26rem met een merkicoon, titel en optionele tekst.
+ */
+import Icon, { type IconName } from "../atoms/Icon.astro";
+
+interface Props {
+  title: string;
+  text?: string;
+  icon?: IconName;
+}
+
+const { title, text, icon = "utility-mark" } = Astro.props;
+---
+
+<section class="hero_utility-page_wrap">
+  <div class="hero_utility-page_contain u-container">
+    <div class="hero_utility-page_content">
+      <div class="hero_utility-page_icon"><Icon name={icon} /></div>
+      <h1 class="hero_utility-page_title">{title}</h1>
+      {text && <p class="hero_utility-page_text">{text}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero_utility-page_wrap {
+    text-align: center;
+  }
+
+  .hero_utility-page_contain {
+    align-content: center;
+    min-height: 100vh;
+  }
+
+  .hero_utility-page_content {
+    grid-column-gap: var(--space--8);
+    grid-row-gap: var(--space--8);
+    flex-flow: column;
+    align-items: center;
+    max-width: 26rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+  }
+
+  .hero_utility-page_icon {
+    width: 3rem;
+  }
+
+  .hero_utility-page_title {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+</style>

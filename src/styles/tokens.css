@@ -1,0 +1,328 @@
+/* ============================================================================
+   TOKENS — laag 1 (primitives)
+   1-op-1 overgenomen uit het Webflow-export (:root + de inline "page code"-blokken).
+   Deze laag is theme-agnostisch. Semantische tokens staan in themes.css.
+   ========================================================================= */
+
+:root {
+  /* --- Swatches ------------------------------------------------------- */
+  --swatch--brand: #c50600;
+  --swatch--transparent: transparent;
+
+  --swatch--light-100: white;
+  --swatch--light-80: #e8eae9;
+  --swatch--light-60: #dedede;
+  --swatch--light-faded: #ffffff1a;
+
+  --swatch--dark-100: black;
+  --swatch--dark-80: #1d1e20;
+  --swatch--dark-60: #282829;
+  --swatch--dark-40: #343536;
+  --swatch--dark-faded: #0009;
+
+  --swatch--brand-text: var(--swatch--dark-100);
+
+  /* FIX (ANALYSE.md §8.1) — het origineel gebruikt deze twee aliassen in de
+     button-hoverstates, maar definieert ze nergens. Zonder deze regels heeft
+     hover geen kleur. Zie FIDELITY.md. */
+  --swatch--light: var(--swatch--light-100);
+  --swatch--dark: var(--swatch--dark-100);
+
+  /* --- Sizes ---------------------------------------------------------- */
+  --size--0rem: 0rem;
+  --size--0-125rem: 0.125rem;
+  --size--0-25rem: 0.25rem;
+  --size--0-375rem: 0.375rem;
+  --size--0-5rem: 0.5rem;
+  --size--0-75rem: 0.75rem;
+  --size--1rem: 1rem;
+  --size--1-25rem: 1.25rem;
+  --size--1-5rem: 1.5rem;
+  --size--2rem: 2rem;
+  --size--2-5rem: 2.5rem;
+  --size--3rem: 3rem;
+  --size--3-5rem: 3.5rem;
+  --size--4rem: 4rem;
+  --size--4-5rem: 4.5rem;
+  --size--5rem: 5rem;
+  --size--5-5rem: 5.5rem;
+  --size--6rem: 6rem;
+  --size--6-5rem: 6.5rem;
+  --size--7rem: 7rem;
+  --size--7-5rem: 7.5rem;
+  --size--8rem: 8rem;
+  --size--8-5rem: 8.5rem;
+  --size--9rem: 9rem;
+  --size--9-5rem: 9.5rem;
+  --size--10rem: 10rem;
+  --size--11rem: 11rem;
+  --size--12rem: 12rem;
+  --size--13rem: 13rem;
+  --size--14rem: 14rem;
+  --size--15rem: 15rem;
+  --size--16rem: 16rem;
+
+  /* --- Spacing schaal -------------------------------------------------- */
+  --space--1: var(--size--0-25rem);
+  --space--2: var(--size--0-5rem);
+  --space--3: var(--size--0-75rem);
+  --space--4: var(--size--1rem);
+  --space--5: var(--size--1-5rem);
+  --space--6: var(--size--2rem);
+  --space--7: var(--size--3rem);
+  --space--8: var(--size--4rem);
+
+  /* --- Sectie-spacing (data-padding-top/bottom) ------------------------ */
+  --section-space--none: var(--size--0rem);
+  --section-space--small: var(--size--5rem);
+  --section-space--main: var(--size--7rem);
+  --section-space--large: var(--size--10rem);
+  /* "even" = var(--site--margin), zie base.css */
+
+  /* --- Radius / borders / focus ---------------------------------------- */
+  --radius--small: 0.5rem;
+  --radius--main: 1rem;
+  --radius--round: 100vw;
+  --border-width--main: 0.094rem;
+  --focus--width: 0.125rem;
+  --focus--offset-inner: -0.125rem;
+  --focus--offset-outer: 0.1875rem;
+
+  /* --- Fonts ----------------------------------------------------------- */
+  --font--primary-family: Nexa, Arial, sans-serif;
+  --font--secondary-family: "PP Supply Sans", Arial, sans-serif;
+  --font--primary-regular: 400;
+  --font--primary-medium: 500;
+  --font--primary-black: 900;
+
+  --line-height--1: 1;
+  --line-height--1-1: 1.1;
+  --line-height--1-3: 1.3;
+  --line-height--1-5: 1.5;
+  --letter-spacing--0em: 0em;
+  --letter-spacing--0-03em: -0.03em;
+
+  --text-transform--none: none;
+  --text-transform--uppercase: uppercase;
+  --text-transform--capitalize: capitalize;
+  --text-transform--lowercase: lowercase;
+  --text-transform--inherit: inherit;
+
+  /* --- Gedeelde heading-defaults --------------------------------------- */
+  --all-headings--heading-font-family: var(--font--primary-family);
+  --all-headings--heading-font-weight: var(--font--primary-black);
+  --all-headings--heading-line-height: var(--line-height--1-3);
+  --all-headings--heading-letter-spacing: var(--letter-spacing--0-03em);
+  --all-headings--heading-text-transform: var(--text-transform--uppercase);
+  --all-headings--heading-margin-top: var(--space--4);
+  --all-headings--heading-margin-bottom: var(--space--2);
+
+  /* --- Type scale ------------------------------------------------------ */
+  --display--font-family: var(--all-headings--heading-font-family);
+  --display--font-size: var(--size--7rem);
+  --display--line-height: var(--all-headings--heading-line-height);
+  --display--font-weight: var(--all-headings--heading-font-weight);
+  --display--letter-spacing: var(--all-headings--heading-letter-spacing);
+  --display--text-transform: var(--all-headings--heading-text-transform);
+  --display--margin-top: var(--space--5);
+  --display--margin-bottom: var(--space--3);
+
+  --h1--font-family: var(--all-headings--heading-font-family);
+  --h1--font-size: var(--size--3rem);
+  --h1--line-height: var(--line-height--1-1);
+  --h1--font-weight: var(--all-headings--heading-font-weight);
+  --h1--letter-spacing: var(--all-headings--heading-letter-spacing);
+  --h1--text-transform: var(--all-headings--heading-text-transform);
+  --h1--margin-top: var(--space--5);
+  --h1--margin-bottom: var(--space--3);
+
+  --h2--font-family: var(--all-headings--heading-font-family);
+  --h2--font-size: var(--size--2rem);
+  --h2--line-height: var(--all-headings--heading-line-height);
+  --h2--font-weight: var(--all-headings--heading-font-weight);
+  --h2--letter-spacing: var(--all-headings--heading-letter-spacing);
+  --h2--text-transform: var(--all-headings--heading-text-transform);
+  --h2--margin-top: var(--space--4);
+  --h2--margin-bottom: var(--space--3);
+
+  --h3--font-family: var(--all-headings--heading-font-family);
+  --h3--font-size: var(--size--1-5rem);
+  --h3--line-height: var(--line-height--1-1);
+  --h3--font-weight: var(--all-headings--heading-font-weight);
+  --h3--letter-spacing: var(--all-headings--heading-letter-spacing);
+  --h3--text-transform: var(--all-headings--heading-text-transform);
+  --h3--margin-top: var(--all-headings--heading-margin-top);
+  --h3--margin-bottom: var(--all-headings--heading-margin-bottom);
+
+  --h4--font-family: var(--all-headings--heading-font-family);
+  --h4--font-size: var(--size--2rem);
+  --h4--line-height: var(--line-height--1-3);
+  --h4--font-weight: var(--all-headings--heading-font-weight);
+  --h4--letter-spacing: var(--letter-spacing--0em);
+  --h4--text-transform: var(--all-headings--heading-text-transform);
+  --h4--margin-top: var(--all-headings--heading-margin-top);
+  --h4--margin-bottom: var(--all-headings--heading-margin-bottom);
+
+  --h5--font-family: var(--all-headings--heading-font-family);
+  --h5--font-size: var(--size--0-75rem);
+  --h5--line-height: var(--line-height--1-3);
+  --h5--font-weight: var(--all-headings--heading-font-weight);
+  --h5--letter-spacing: var(--letter-spacing--0em);
+  --h5--text-transform: var(--text-transform--uppercase);
+  --h5--margin-top: var(--all-headings--heading-margin-top);
+  --h5--margin-bottom: var(--all-headings--heading-margin-bottom);
+
+  --h6--font-family: var(--all-headings--heading-font-family);
+  --h6--font-size: var(--size--1rem);
+  --h6--line-height: var(--line-height--1-3);
+  --h6--font-weight: var(--all-headings--heading-font-weight);
+  --h6--letter-spacing: var(--letter-spacing--0em);
+  --h6--text-transform: var(--all-headings--heading-text-transform);
+  --h6--margin-top: var(--all-headings--heading-margin-top);
+  --h6--margin-bottom: var(--all-headings--heading-margin-bottom);
+
+  --text-large--font-family: var(--font--primary-family);
+  --text-large--font-size: var(--size--1-25rem);
+  --text-large--line-height: var(--line-height--1-5);
+  --text-large--font-weight: var(--font--primary-regular);
+  --text-large--letter-spacing: var(--letter-spacing--0em);
+  --text-large--text-transform: var(--text-transform--inherit);
+  --text-large--margin-top: var(--space--2);
+  --text-large--margin-bottom: var(--space--2);
+
+  --text-main--font-family: var(--font--primary-family);
+  --text-main--font-size: var(--size--1rem);
+  --text-main--line-height: var(--line-height--1-5);
+  --text-main--font-weight: var(--font--primary-regular);
+  --text-main--letter-spacing: var(--letter-spacing--0em);
+  --text-main--text-transform: var(--text-transform--none);
+  --text-main--margin-top: var(--space--2);
+  --text-main--margin-bottom: var(--space--2);
+
+  --text-small--font-family: var(--font--primary-family);
+  --text-small--font-size: 0.875rem;
+  --text-small--line-height: var(--line-height--1-5);
+  --text-small--font-weight: var(--font--primary-regular);
+  --text-small--letter-spacing: var(--letter-spacing--0em);
+  --text-small--text-transform: var(--text-transform--inherit);
+  --text-small--margin-top: var(--space--2);
+  --text-small--margin-bottom: var(--space--2);
+
+  /* --- Component-tokens ------------------------------------------------ */
+  --nav--height: var(--size--5rem);
+  --button--button-height: var(--size--3rem);
+  --content-space--button-group-gap: var(--space--2);
+  --content-space--button-margin: var(--space--6);
+  --content-space--eyebrow-margin: var(--space--5);
+  --cutout-size: 0.75rem;
+
+  /* --- Easing / transitions -------------------------------------------- */
+  --ease-default: cubic-bezier(0.91, 0, 0.06, 1);
+  /* FIX (ANALYSE.md §8.2) — nav-dropdown gebruikt --ease-spring, dat nergens
+     gedefinieerd was. Waarde gekozen om de bedoelde spring te benaderen. */
+  --ease-spring: cubic-bezier(0.34, 1.52, 0.64, 1);
+  --animation-smooth: all 0.5s cubic-bezier(0.65, 0.01, 0.15, 0.99);
+  --animation-fast: all 0.3s cubic-bezier(0.65, 0.01, 0.15, 0.99);
+
+  /* --- Grid / layout --------------------------------------------------- */
+  --site--width: 90rem;
+  --site--column-count: 12;
+  --site--gutter: 1rem;
+}
+
+/* ----------------------------------------------------------------------------
+   Fluid sizes
+   Origineel gegenereerd met fluidbuilder (design 90 / min 20rem / max 90rem).
+   Overschrijft de vaste rem-waarden hierboven — volgorde is significant.
+   https://fluidbuilder.webflow.io/?design=90&max=90&min=20
+   ------------------------------------------------------------------------- */
+:root {
+  --site--margin: clamp(1rem, 0.428rem + 2.86vw, 3rem);
+  --size--2rem: clamp(1.75rem, 1.678rem + 0.36vw, 2rem);
+  --size--2-5rem: clamp(2rem, 1.858rem + 0.71vw, 2.5rem);
+  --size--3rem: clamp(2.25rem, 2.036rem + 1.07vw, 3rem);
+  --size--3-5rem: clamp(2.375rem, 2.053rem + 1.61vw, 3.5rem);
+  --size--4rem: clamp(2.5rem, 2.072rem + 2.14vw, 4rem);
+  --size--4-5rem: clamp(2.75rem, 2.25rem + 2.5vw, 4.5rem);
+  --size--5rem: clamp(3rem, 2.428rem + 2.86vw, 5rem);
+  --size--5-5rem: clamp(3.25rem, 2.608rem + 3.21vw, 5.5rem);
+  --size--6rem: clamp(3.5rem, 2.786rem + 3.57vw, 6rem);
+  --size--6-5rem: clamp(3.75rem, 2.964rem + 3.93vw, 6.5rem);
+  --size--7rem: clamp(4rem, 3.142rem + 4.29vw, 7rem);
+  --size--7-5rem: clamp(4.25rem, 3.322rem + 4.64vw, 7.5rem);
+  --size--8rem: clamp(4.5rem, 3.5rem + 5vw, 8rem);
+  --size--8-5rem: clamp(4.75rem, 3.678rem + 5.36vw, 8.5rem);
+  --size--9rem: clamp(5rem, 3.858rem + 5.71vw, 9rem);
+  --size--9-5rem: clamp(5.25rem, 4.036rem + 6.07vw, 9.5rem);
+  --size--10rem: clamp(5.5rem, 4.214rem + 6.43vw, 10rem);
+  --size--11rem: clamp(5.75rem, 4.25rem + 7.5vw, 11rem);
+  --size--12rem: clamp(6rem, 4.286rem + 8.57vw, 12rem);
+  --size--13rem: clamp(6.5rem, 4.642rem + 9.29vw, 13rem);
+  --size--14rem: clamp(7rem, 5rem + 10vw, 14rem);
+  --size--15rem: clamp(7.5rem, 5.358rem + 10.71vw, 15rem);
+  --size--16rem: clamp(8rem, 5.714rem + 11.43vw, 16rem);
+}
+
+/* ----------------------------------------------------------------------------
+   Afgeleide grid-tokens (berekend uit site--width / column-count / gutter)
+   ------------------------------------------------------------------------- */
+:root {
+  --site--max-width: min(var(--site--width), 100vw);
+  --site--gutter-total: calc(var(--site--gutter) * (var(--site--column-count) - 1));
+
+  --container--main: calc(var(--site--max-width) - var(--site--margin) * 2);
+  --container--full: calc(100vw - var(--site--margin) * 2);
+  --container--small: calc(
+    var(--column-width--plus-gutter) * (var(--site--column-count) - 2) - var(--site--gutter)
+  );
+
+  --column-width--1: calc(
+    (var(--container--main) - var(--site--gutter-total)) / var(--site--column-count)
+  );
+  --column-width--plus-gutter: calc(var(--column-width--1) + var(--site--gutter));
+  --column-width--2: calc(var(--column-width--plus-gutter) * 2 - var(--site--gutter));
+  --column-width--3: calc(var(--column-width--plus-gutter) * 3 - var(--site--gutter));
+  --column-width--4: calc(var(--column-width--plus-gutter) * 4 - var(--site--gutter));
+  --column-width--5: calc(var(--column-width--plus-gutter) * 5 - var(--site--gutter));
+  --column-width--6: calc(var(--column-width--plus-gutter) * 6 - var(--site--gutter));
+  --column-width--7: calc(var(--column-width--plus-gutter) * 7 - var(--site--gutter));
+  --column-width--8: calc(var(--column-width--plus-gutter) * 8 - var(--site--gutter));
+  --column-width--9: calc(var(--column-width--plus-gutter) * 9 - var(--site--gutter));
+  --column-width--10: calc(var(--column-width--plus-gutter) * 10 - var(--site--gutter));
+  --column-width--11: calc(var(--column-width--plus-gutter) * 11 - var(--site--gutter));
+  --column-width--12: calc(var(--column-width--plus-gutter) * 12 - var(--site--gutter));
+
+  --column-margin--1: calc(var(--column-width--plus-gutter) * 1);
+  --column-margin--2: calc(var(--column-width--plus-gutter) * 2);
+  --column-margin--3: calc(var(--column-width--plus-gutter) * 3);
+  --column-margin--4: calc(var(--column-width--plus-gutter) * 4);
+  --column-margin--5: calc(var(--column-width--plus-gutter) * 5);
+  --column-margin--6: calc(var(--column-width--plus-gutter) * 6);
+  --column-margin--7: calc(var(--column-width--plus-gutter) * 7);
+  --column-margin--8: calc(var(--column-width--plus-gutter) * 8);
+  --column-margin--9: calc(var(--column-width--plus-gutter) * 9);
+  --column-margin--10: calc(var(--column-width--plus-gutter) * 10);
+  --column-margin--11: calc(var(--column-width--plus-gutter) * 11);
+  --column-margin--12: calc(var(--column-width--plus-gutter) * 12);
+
+  --breakout-start: [full-start] minmax(0, 1fr) [content-start];
+  --breakout-end: [content-end] minmax(0, 1fr) [full-end];
+  --grid-breakout-single: var(--breakout-start) minmax(0, var(--container--main))
+    var(--breakout-end);
+  --grid-breakout: var(--breakout-start)
+    repeat(var(--site--column-count), minmax(0, var(--column-width--1))) var(--breakout-end);
+
+  --grid-main: repeat(var(--site--column-count), minmax(0, 1fr));
+  --grid-1: repeat(1, minmax(0, 1fr));
+  --grid-2: repeat(2, minmax(0, 1fr));
+  --grid-3: repeat(3, minmax(0, 1fr));
+  --grid-4: repeat(4, minmax(0, 1fr));
+  --grid-5: repeat(5, minmax(0, 1fr));
+  --grid-6: repeat(6, minmax(0, 1fr));
+  --grid-7: repeat(7, minmax(0, 1fr));
+  --grid-8: repeat(8, minmax(0, 1fr));
+  --grid-9: repeat(9, minmax(0, 1fr));
+  --grid-10: repeat(10, minmax(0, 1fr));
+  --grid-11: repeat(11, minmax(0, 1fr));
+  --grid-12: repeat(12, minmax(0, 1fr));
+}

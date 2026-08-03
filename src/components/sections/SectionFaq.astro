@@ -1,0 +1,91 @@
+---
+/**
+ * FAQ (section_faq): gecentreerde kop, daaronder twee kolommen accordeons.
+ * De vragen worden om en om over de twee kolommen verdeeld, zoals in het
+ * origineel (twee faq_items-wrap in een u-grid-column-2).
+ */
+import SectionShell from "./SectionShell.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import FaqItem from "../molecules/FaqItem.astro";
+import PortableText from "../../sanity/PortableText.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Faq {
+  question: string;
+  /** Portable Text uit de CMS, of een HTML-string in de showcase. */
+  answer: string | unknown[];
+}
+
+interface Props {
+  heading?: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  items: Faq[];
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const {
+  heading = "Veel gestelde vragen",
+  eyebrow = { text: "FAQ", variant: "secondary" as const },
+  items,
+  paddingTop = "main",
+  paddingBottom = "main",
+} = Astro.props;
+
+const half = Math.ceil(items.length / 2);
+const columns = [items.slice(0, half), items.slice(half)];
+---
+
+<SectionShell name="section_faq" theme="inherit" {paddingTop} {paddingBottom}>
+  <div class="u-mb-8">
+    <div class="header-centered_layout u-grid-desktop">
+      <div class="header-centered_heading u-column-custom">
+        <div class="u-vflex-center-top">
+          <div class="u-text-align-center">
+            {
+              eyebrow && (
+                <div class="u-mb-4">
+                  <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />
+                </div>
+              )
+            }
+            <h2 class="u-text-style-h2">{heading}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="u-grid-column-2">
+    {
+      columns.map((column, i) => (
+        <div class="faq_items-wrap">
+          {column.map((f) => (
+            <FaqItem question={f.question} group={`faq-${i}`}>
+              {typeof f.answer === "string" ? (
+                <p set:html={f.answer} />
+              ) : (
+                <PortableText value={f.answer} />
+              )}
+            </FaqItem>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</SectionShell>
+
+<style>
+  .header-centered_heading {
+    grid-column: 4 / span 6;
+  }
+
+  .faq_items-wrap {
+    grid-column-gap: var(--space--4);
+    grid-row-gap: var(--space--4);
+    flex-flow: column;
+    display: flex;
+    align-content: start;
+  }
+</style>

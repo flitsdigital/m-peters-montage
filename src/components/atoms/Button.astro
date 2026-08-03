@@ -1,0 +1,138 @@
+---
+/**
+ * De hoofdbutton (btn_main_wrap): rode balk, PP Supply Sans-tekst, icoon,
+ * donkere achtergrond die bij hover van onder omhoog schuift, en optioneel
+ * twee "cutout"-hoekjes die bij hover wegschuiven.
+ *
+ * De hoekjes kleuren standaard mee met var(--theme--background); ligt de
+ * button op de secundaire achtergrond, dan zet de sectie
+ * `--cutout-background: var(--theme--background-secondary)` op een parent.
+ */
+import Clickable from "./Clickable.astro";
+import Icon, { type IconName } from "./Icon.astro";
+
+interface Props {
+  label: string;
+  href?: string;
+  target?: string;
+  type?: "button" | "submit";
+  style?: "primary" | "secondary";
+  icon?: IconName;
+  cutouts?: boolean;
+  current?: boolean;
+}
+
+const {
+  label,
+  href,
+  target,
+  type = "button",
+  style = "primary",
+  icon = "phone",
+  cutouts = true,
+  current,
+} = Astro.props;
+---
+
+<div data-button-style={style} class="btn_main_wrap">
+  <Clickable {label} {href} {target} {type} {current} />
+  <div class="btn_bg"></div>
+  <div class="btn_icon-wrap"><Icon name={icon} /></div>
+  <div aria-hidden="true" class="btn_main_text">{label}</div>
+  {
+    cutouts && (
+      <Fragment>
+        <div data-cutout-pos="top-left" class="btn_cutout" />
+        <div data-cutout-pos="bottom-right" class="btn_cutout" />
+      </Fragment>
+    )
+  }
+</div>
+
+<style>
+  .btn_main_wrap {
+    height: var(--button--button-height);
+    padding: var(--size--1rem) var(--size--1-5rem);
+    grid-column-gap: var(--content-space--button-group-gap);
+    grid-row-gap: var(--content-space--button-group-gap);
+    background-color: var(--button--background);
+    color: var(--button--text);
+    vertical-align: middle;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: 700;
+    line-height: 1;
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      background-color 0.2s;
+    display: inline-flex;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn_main_text {
+    z-index: 2;
+    text-transform: uppercase;
+    font-family: var(--font--secondary-family);
+    font-weight: 700;
+    line-height: inherit;
+    position: relative;
+  }
+
+  /* Donkere laag die bij hover van onder omhoog schuift */
+  .btn_bg {
+    z-index: 0;
+    transform-origin: bottom;
+    background-color: color-mix(
+      in srgb,
+      var(--swatch--brand) 90%,
+      var(--swatch--dark-100) 10%
+    );
+    transform-style: preserve-3d;
+    position: absolute;
+    inset: 0%;
+    transform: scale3d(1, 0, 1);
+    transition: transform 0.8s var(--ease-default);
+  }
+
+  .btn_icon-wrap {
+    z-index: 3;
+    width: 1.25rem;
+  }
+
+  .btn_cutout {
+    width: var(--cutout-size);
+    height: var(--cutout-size);
+    background: var(--cutout-background, var(--theme--background));
+    position: absolute;
+    transition: transform 0.5s var(--ease-default);
+  }
+
+  .btn_cutout[data-cutout-pos="top-left"] {
+    inset: 0% auto auto 0%;
+  }
+
+  .btn_cutout[data-cutout-pos="bottom-right"] {
+    inset: auto 0% 0% auto;
+  }
+
+  .btn_main_wrap:hover .btn_bg {
+    transform: scaleY(1);
+  }
+
+  .btn_main_wrap:hover .btn_cutout {
+    transform: translateX(-100%);
+  }
+
+  .btn_main_wrap:hover .btn_cutout:last-child {
+    transform: translateX(100%);
+  }
+
+  @media screen and (max-width: 479px) {
+    .btn_main_wrap {
+      padding-right: var(--size--1rem);
+      padding-left: var(--size--1rem);
+    }
+  }
+</style>

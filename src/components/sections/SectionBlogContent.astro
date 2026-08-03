@@ -1,0 +1,14 @@
+---
+/**
+ * Body van een blogartikel (section_blog-content) — rich text in de smalle
+ * container. Vast onderdeel van de blogroute, geen page-builder blok.
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+---
+
+<SectionShell name="section_blog-content" theme="inherit" container="small">
+  <div class="blog-content_component">
+    <RichText><slot /></RichText>
+  </div>
+</SectionShell>

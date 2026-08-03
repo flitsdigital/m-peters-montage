@@ -1,0 +1,160 @@
+---
+/**
+ * Formulier-veld met zwevend chip-label (form_main_field_wrap).
+ * Eén atom voor input / textarea / select — de markup en styling zijn
+ * identiek op het veldtype na. Vervangt de losse Input/Textarea/Select/Label
+ * uit COMPONENT_MAPPING.md.
+ */
+interface Option {
+  value: string;
+  label?: string;
+}
+
+interface Props {
+  kind?: "text" | "email" | "tel" | "textarea" | "select";
+  label: string;
+  name: string;
+  placeholder?: string;
+  required?: boolean;
+  maxlength?: number;
+  options?: (string | Option)[];
+  /** Het origineel zet u-weight-medium op de select/textarea-labels. */
+  labelWeight?: "medium";
+}
+
+const {
+  kind = "text",
+  label,
+  name,
+  placeholder,
+  required = false,
+  maxlength = kind === "textarea" ? 5000 : 256,
+  options = [],
+  labelWeight,
+} = Astro.props;
+
+const opts = options.map((o) =>
+  typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value },
+);
+---
+
+<label class="form_main_field_wrap">
+  <span
+    class:list={["form_main_label", labelWeight === "medium" && "u-weight-medium"]}
+    >{label}</span
+  >
+  {
+    kind === "textarea" ? (
+      <textarea
+        class="form_main_field_input is-message"
+        {name}
+        {placeholder}
+        {required}
+        {maxlength}
+      />
+    ) : kind === "select" ? (
+      <select class="form_main_field_input" {name} {required}>
+        {placeholder && <option value="">{placeholder}</option>}
+        {opts.map((o) => (
+          <option value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        class="form_main_field_input"
+        type={kind}
+        {name}
+        {placeholder}
+        {required}
+        {maxlength}
+      />
+    )
+  }
+</label>
+
+<style>
+  .form_main_field_wrap {
+    width: 100%;
+    padding-top: var(--size--0-5rem);
+    text-align: left;
+    display: block;
+  }
+
+  /* Zwevend chip-label: absolute zonder offsets blijft op zijn plek in de
+     flow maar valt eruit; translate -50% legt het over de bovenrand van het
+     veld. 1-op-1 uit het origineel. */
+  .form_main_label {
+    margin-left: var(--size--1rem);
+    padding: var(--size--0-25rem) var(--size--0-5rem);
+    border: 1px solid var(--theme--border);
+    background-color: var(--theme--background);
+    font-family: var(--font--secondary-family);
+    font-size: var(--size--0-75rem);
+    font-weight: 500;
+    /* Origineel typt de labels hardcoded in caps; hier als CSS zodat de CMS
+       gewone tekst kan aanleveren. Zelfde rendering. */
+    text-transform: uppercase;
+    display: inline-flex;
+    position: absolute;
+    transform: translate(0, -50%);
+  }
+
+  .form_main_field_input {
+    display: block;
+    width: 100%;
+    height: var(--size--4-5rem);
+    padding: 8px var(--size--1rem);
+    border: 1px solid var(--theme--border);
+    background-color: var(--theme--background);
+    font-family: var(--text-large--font-family);
+    font-size: var(--text-main--font-size);
+    line-height: var(--text-large--line-height);
+    font-weight: var(--text-large--font-weight);
+    text-transform: var(--text-large--text-transform);
+    color: color-mix(in srgb, var(--theme--text) 60%, transparent);
+    border-radius: 0;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+
+  .form_main_field_input::placeholder {
+    color: color-mix(in srgb, var(--theme--text) 60%, transparent);
+  }
+
+  .form_main_field_input:focus {
+    border-color: #3898ec;
+    outline: 0;
+  }
+
+  .form_main_field_input.is-message {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 10rem;
+    max-height: 14rem;
+    padding-top: 1.5rem;
+  }
+
+  @media screen and (max-width: 479px) {
+    .form_main_field_wrap {
+      padding-top: var(--size--0-25rem);
+      flex-flow: column;
+      display: flex;
+    }
+
+    .form_main_label {
+      margin-left: var(--size--0rem);
+      padding: var(--size--0rem);
+      border-color: var(--swatch--transparent);
+      background-color: var(--swatch--transparent);
+      display: block;
+      position: relative;
+      transform: none;
+    }
+
+    .form_main_field_input {
+      height: var(--size--5-5rem);
+    }
+  }
+</style>

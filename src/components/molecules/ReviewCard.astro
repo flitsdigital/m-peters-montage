@@ -1,0 +1,47 @@
+---
+/**
+ * Reviewkaart in de slider: sterren, quote-icoon, tekst, naam.
+ */
+import Icon from "../atoms/Icon.astro";
+import StarRating from "../atoms/StarRating.astro";
+
+interface Props {
+  text: string;
+  name: string;
+}
+
+const { text, name } = Astro.props;
+---
+
+<div class="reviews_item">
+  <StarRating />
+  <div class="u-vflex-left-top u-gap-4">
+    <Icon name="quote" class="reviews_quote-wrap" />
+    <p>{text}</p>
+  </div>
+  <div class="reviews_name">{name}</div>
+</div>
+
+<style>
+  .reviews_item {
+    height: 100%;
+    padding: var(--size--1-5rem);
+    grid-column-gap: var(--space--6);
+    grid-row-gap: var(--space--6);
+    background-color: var(--theme--background);
+    flex-flow: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: flex;
+  }
+
+  .reviews_item :global(.reviews_quote-wrap) {
+    width: 2rem;
+    color: var(--theme--background-secondary);
+  }
+
+  .reviews_name {
+    text-transform: uppercase;
+    font-family: var(--font--secondary-family);
+  }
+</style>

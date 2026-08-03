@@ -1,0 +1,63 @@
+---
+/**
+ * Werkwijze in 3 stappen (section_werkwijze): kop links op 6 kolommen,
+ * intro rechts op 6, daaronder een 3-koloms grid met genummerde stappen.
+ */
+import SectionShell from "./SectionShell.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import WerkwijzeStep from "../molecules/WerkwijzeStep.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Step {
+  title: string;
+  text?: string;
+  number?: string;
+}
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  steps: Step[];
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const {
+  heading,
+  eyebrow = { text: "Werkwijze", variant: "secondary" as const },
+  steps,
+  paddingTop = "main",
+  paddingBottom = "main",
+} = Astro.props;
+---
+
+<SectionShell name="section_werkwijze" theme="inherit" {paddingTop} {paddingBottom}>
+  <div class="werkwijze_header-layout u-grid-desktop">
+    <div class="werkwijze_heading u-column-6">
+      {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />}
+      <h2>{heading}</h2>
+    </div>
+    <div class="u-column-6"><slot /></div>
+  </div>
+
+  <div class="u-mt-8">
+    <div class="werkwijze_layout u-grid-column-3">
+      {
+        steps.map((s, i) => (
+          <WerkwijzeStep
+            title={s.title}
+            text={s.text}
+            number={s.number ?? String(i + 1).padStart(2, "0")}
+          />
+        ))
+      }
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  .werkwijze_header-layout {
+    align-items: end;
+  }
+</style>

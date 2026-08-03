@@ -1,0 +1,91 @@
+---
+/**
+ * Gedeelde buitenkant van elke sectie: optionele `section_wrapper`, het
+ * `data-theme` op de <section> en de `u-container` met data-padding.
+ *
+ * Dit is de boilerplate die in het origineel op ~20 secties herhaald staat.
+ * De `before`-slot is voor lagen die vóór de container komen
+ * (achtergrondbeeld, background_secondary, divider).
+ */
+import type { SectionSpace } from "../../design-system/tokens";
+
+export interface SectionShellProps {
+  /** Wordt de class op de <section>, bv. "section_content". */
+  name: string;
+  theme?: "light" | "dark" | "invert" | "inherit";
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+  /** Zet de sectie in een section_wrapper (1rem theme-rand rondom). */
+  wrapper?: boolean;
+  /** Alleen met wrapper: geen padding aan de bovenkant (is-top). */
+  wrapperTop?: boolean;
+  /** Theme op de wrapper — nodig als een kind `invert` gebruikt. */
+  wrapperTheme?: "light" | "dark";
+  container?: "main" | "small" | "full" | false;
+  containerClass?: string;
+  id?: string;
+}
+
+const {
+  name,
+  theme = "inherit",
+  paddingTop = "main",
+  paddingBottom = "main",
+  wrapper = false,
+  wrapperTop = false,
+  wrapperTheme,
+  container = "main",
+  containerClass,
+  id,
+} = Astro.props as SectionShellProps;
+
+const containerClasses = [
+  container === "main" && "u-container",
+  container === "small" && "u-container-small",
+  container === "full" && "u-container-full",
+  containerClass,
+];
+---
+
+{
+  wrapper && (
+    <div
+      data-theme={wrapperTheme}
+      class:list={["section_wrapper", wrapperTop && "is-top"]}
+    >
+      <section {id} data-theme={theme} class={name}>
+        <slot name="before" />
+        {container === false ? (
+          <slot />
+        ) : (
+          <div
+            data-padding-top={paddingTop}
+            data-padding-bottom={paddingBottom}
+            class:list={containerClasses}
+          >
+            <slot />
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}
+
+{
+  !wrapper && (
+    <section {id} data-theme={theme} class={name}>
+      <slot name="before" />
+      {container === false ? (
+        <slot />
+      ) : (
+        <div
+          data-padding-top={paddingTop}
+          data-padding-bottom={paddingBottom}
+          class:list={containerClasses}
+        >
+          <slot />
+        </div>
+      )}
+    </section>
+  )
+}

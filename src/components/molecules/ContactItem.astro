@@ -1,0 +1,39 @@
+---
+/**
+ * Telefoon-/mailregel met icoon (contact_item) — in de contactheader.
+ */
+import Icon, { type IconName } from "../atoms/Icon.astro";
+
+interface Props {
+  href: string;
+  label: string;
+  icon: IconName;
+}
+
+const { href, label, icon } = Astro.props;
+---
+
+<a {href} class="contact_item">
+  <div class="contact_icon"><Icon name={icon} /></div>
+  <div>{label}</div>
+</a>
+
+<style>
+  .contact_item {
+    grid-column-gap: var(--size--0-5rem);
+    grid-row-gap: var(--size--0-5rem);
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: 700;
+    display: flex;
+  }
+
+  .contact_icon {
+    width: var(--size--1-25rem);
+    height: var(--size--1-25rem);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+</style>

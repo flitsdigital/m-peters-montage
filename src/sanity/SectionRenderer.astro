@@ -1,0 +1,335 @@
+---
+/**
+ * Vertaalt Sanity-secties naar de Astro-componenten uit Fase 3.
+ *
+ * De componenten blijven puur presentatie: dit bestand is de enige plek waar
+ * CMS-veldnamen op props worden gemapt. Een sectieschema draagt nooit styling.
+ */
+import HeroHome from "../components/sections/HeroHome.astro";
+import HeaderCentered from "../components/sections/HeaderCentered.astro";
+import SectionMedia from "../components/sections/SectionMedia.astro";
+import SectionContentCentered from "../components/sections/SectionContentCentered.astro";
+import SectionRichText from "../components/sections/SectionRichText.astro";
+import SectionFeatureGrid from "../components/sections/SectionFeatureGrid.astro";
+import SectionEmbed from "../components/sections/SectionEmbed.astro";
+import SectionWerkwijze from "../components/sections/SectionWerkwijze.astro";
+import SectionReviews from "../components/sections/SectionReviews.astro";
+import SectionProjecten from "../components/sections/SectionProjecten.astro";
+import SectionFaq from "../components/sections/SectionFaq.astro";
+import SectionContact from "../components/sections/SectionContact.astro";
+import SectionDiensten from "../components/sections/SectionDiensten.astro";
+import SectionCardGrid from "../components/sections/SectionCardGrid.astro";
+import SectionRegio from "../components/sections/SectionRegio.astro";
+import SectionLinks from "../components/sections/SectionLinks.astro";
+
+import PortableText from "./PortableText.astro";
+import ContactItem from "../components/molecules/ContactItem.astro";
+import { imageProps } from "./client";
+import { SITE } from "../data/site";
+
+interface Props {
+  sections?: any[];
+}
+
+const { sections = [] } = Astro.props;
+
+/** Lege objecten uit de Studio (alle velden leeg) niet doorgeven. */
+const clean = <T extends Record<string, any> | undefined>(value: T) =>
+  value && Object.values(value).some((v) => v !== undefined && v !== null && v !== "")
+    ? value
+    : undefined;
+
+const spacing = (s: any) => ({
+  paddingTop: s.paddingTop ?? undefined,
+  paddingBottom: s.paddingBottom ?? undefined,
+});
+---
+
+{
+  sections.map((section) => {
+    const eyebrow = clean(section.eyebrow);
+    const cta = clean(section.cta);
+
+    switch (section._type) {
+      case "heroHomeSection": {
+        const image = imageProps(section.image);
+        return image ? (
+          <HeroHome
+            heading={section.heading}
+            body={section.body}
+            rating={section.rating}
+            image={image.src}
+            alt={image.alt}
+            overlay={section.overlay}
+            cta={cta}
+          />
+        ) : null;
+      }
+
+      case "headerCenteredSection": {
+        const image = imageProps(section.image);
+        return (
+          <HeaderCentered
+            variant={section.variant}
+            heading={section.heading}
+            headingStyle={section.headingStyle}
+            body={section.body}
+            eyebrow={eyebrow}
+            breadcrumbs={section.breadcrumbs}
+            image={image?.src}
+            alt={image?.alt}
+            overlay={section.overlay}
+            cta={cta}
+          >
+            {section.showContactItems && (
+              <div class="u-mb-4" slot="above">
+                <div class="header-contact-items">
+                  <ContactItem
+                    href={SITE.phoneHref}
+                    label={SITE.phoneDisplay}
+                    icon="phone"
+                  />
+                  <ContactItem
+                    href={`mailto:${SITE.email}`}
+                    label={SITE.email}
+                    icon="mail"
+                  />
+                </div>
+              </div>
+            )}
+          </HeaderCentered>
+        );
+      }
+
+      case "mediaSection": {
+        const image = imageProps(section.image);
+        return image ? (
+          <SectionMedia
+            variant={section.variant}
+            heading={section.heading}
+            eyebrow={eyebrow}
+            image={image.src}
+            alt={image.alt}
+            cta={cta}
+            zoom={section.zoom}
+            showSocials={section.showSocials}
+            background={section.background ? "secondary" : undefined}
+            {...spacing(section)}
+          >
+            <PortableText value={section.body} />
+          </SectionMedia>
+        ) : null;
+      }
+
+      case "contentCenteredSection":
+        return (
+          <SectionContentCentered
+            heading={section.heading}
+            eyebrow={eyebrow}
+            cta={cta}
+            {...spacing(section)}
+          >
+            <PortableText value={section.body} />
+          </SectionContentCentered>
+        );
+
+      case "richTextSection":
+        return (
+          <SectionRichText
+            cta={cta}
+            align={section.align}
+            background={section.background ? "secondary" : undefined}
+            {...spacing(section)}
+          >
+            <PortableText value={section.body} />
+          </SectionRichText>
+        );
+
+      case "featureGridSection":
+        return (
+          <SectionFeatureGrid
+            heading={section.heading}
+            intro={section.intro}
+            eyebrow={eyebrow}
+            items={section.items ?? []}
+            background={section.background ? "secondary" : undefined}
+            {...spacing(section)}
+          />
+        );
+
+      case "werkwijzeSection":
+        return (
+          <SectionWerkwijze
+            heading={section.heading}
+            eyebrow={eyebrow}
+            steps={section.steps ?? []}
+            {...spacing(section)}
+          >
+            {section.intro && <p>{section.intro}</p>}
+          </SectionWerkwijze>
+        );
+
+      case "reviewsSection":
+        return (
+          <SectionReviews
+            heading={section.heading}
+            eyebrow={eyebrow}
+            reviews={section.reviews ?? []}
+          >
+            {section.intro && <p>{section.intro}</p>}
+          </SectionReviews>
+        );
+
+      case "projectenSection":
+        return (
+          <SectionProjecten
+            heading={section.heading}
+            eyebrow={eyebrow}
+            theme={section.theme}
+            projects={(section.projects ?? []).flatMap((p: any) => {
+              const image = imageProps(p.coverImage, 800);
+              return image
+                ? [
+                    {
+                      href: `/projecten/${p.slug}`,
+                      title: p.title,
+                      text: p.summary,
+                      image: image.src,
+                      alt: image.alt || p.title,
+                      tags: p.tags ?? [],
+                    },
+                  ]
+                : [];
+            })}
+          >
+            {section.intro && <p>{section.intro}</p>}
+          </SectionProjecten>
+        );
+
+      case "faqSection":
+        return (
+          <SectionFaq
+            heading={section.heading}
+            eyebrow={eyebrow}
+            items={section.items ?? []}
+            {...spacing(section)}
+          />
+        );
+
+      case "contactSection":
+        return (
+          <SectionContact
+            heading={section.heading}
+            eyebrow={eyebrow}
+            formHeading={section.formHeading}
+          >
+            <PortableText value={section.body} />
+          </SectionContact>
+        );
+
+      case "dienstenSection":
+        return (
+          <SectionDiensten
+            heading={section.heading}
+            eyebrow={eyebrow}
+            items={(section.items ?? []).flatMap((d: any) => {
+              const image = imageProps(d.image, 1200);
+              return image
+                ? [
+                    {
+                      href: d.href,
+                      title: d.title,
+                      text: d.text,
+                      image: image.src,
+                      alt: image.alt || d.title,
+                    },
+                  ]
+                : [];
+            })}
+          >
+            <PortableText value={section.body} />
+          </SectionDiensten>
+        );
+
+      case "cardGridSection": {
+        const items = (section.items ?? [])
+          .slice(0, section.limit ?? undefined)
+          .flatMap((item: any) => {
+            const image = imageProps(item.image, 1200);
+            return image
+              ? [
+                  {
+                    href:
+                      section.source === "project"
+                        ? `/projecten/${item.slug}`
+                        : `/blog/${item.slug}`,
+                    title: item.title,
+                    summary: item.summary,
+                    image: image.src,
+                    alt: image.alt || item.title,
+                    tags: item.tags ?? [],
+                  },
+                ]
+              : [];
+          });
+        return (
+          <SectionCardGrid
+            heading={section.heading}
+            items={items}
+            variant={section.source === "project" ? "project" : "blog"}
+            background={section.background ? "secondary" : undefined}
+            {...spacing(section)}
+          />
+        );
+      }
+
+      case "regioSection":
+        return (
+          <SectionRegio
+            items={(section.items ?? []).flatMap((r: any) => {
+              const image = imageProps(r.image, 1000);
+              return image
+                ? [
+                    {
+                      href: r.href,
+                      title: r.title,
+                      image: image.src,
+                      alt: image.alt || r.title,
+                    },
+                  ]
+                : [];
+            })}
+          />
+        );
+
+      case "embedSection":
+        return <SectionEmbed html={section.html} {...spacing(section)} />;
+
+      case "linksSection":
+        return <SectionLinks links={section.links ?? []} />;
+
+      default:
+        return import.meta.env.DEV ? (
+          <div style="padding:2rem;border:2px dashed var(--swatch--brand)">
+            Onbekende sectie: <code>{section._type}</code>
+          </div>
+        ) : null;
+    }
+  })
+}
+
+<style is:global>
+  .header-contact-items {
+    grid-column-gap: var(--size--1rem);
+    grid-row-gap: var(--size--1rem);
+    display: flex;
+  }
+
+  @media screen and (max-width: 479px) {
+    .header-contact-items {
+      flex-flow: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+  }
+</style>

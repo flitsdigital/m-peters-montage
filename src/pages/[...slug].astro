@@ -1,0 +1,42 @@
+---
+/**
+ * Alle inhoudspagina's. Eén route, gevoed door Sanity `page`-documenten.
+ * De slug in Sanity is het volledige pad ("kunststof-kozijnen/soorten");
+ * "home" mapt op /.
+ */
+import PageLayout from "../layouts/PageLayout.astro";
+import SectionRenderer from "../sanity/SectionRenderer.astro";
+import { urlFor } from "../sanity/client";
+
+export async function getStaticPaths() {
+  const { sanityClient } = await import("sanity:client");
+  const { PAGE_SLUGS_QUERY } = await import("../sanity/queries");
+
+  const pages = await sanityClient.fetch(PAGE_SLUGS_QUERY);
+  return pages.map(({ slug }: { slug: string }) => ({
+    params: { slug: slug === "home" ? undefined : slug },
+  }));
+}
+
+const { fetchPage } = await import("../sanity/queries");
+
+const slug = Astro.params.slug || "home";
+const page = await fetchPage(slug);
+
+if (!page) return Astro.rewrite("/404");
+
+const ogImage = page.ogImage?.asset
+  ? urlFor(page.ogImage).width(1200).height(630).url()
+  : undefined;
+---
+
+<PageLayout
+  title={page.metaTitle || page.title}
+  description={page.metaDescription}
+  canonicalPath={slug === "home" ? "/" : `/${slug}`}
+  {ogImage}
+  noindex={page.noindex}
+  localBusiness={slug === "home"}
+>
+  <SectionRenderer sections={page.sections} />
+</PageLayout>

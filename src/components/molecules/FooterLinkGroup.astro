@@ -1,0 +1,95 @@
+---
+/**
+ * Linkkolom in de footer (footer_links). Bij hover schuift een klein blokje
+ * in de brandkleur naar binnen en kleurt de link mee.
+ */
+interface Link {
+  label: string;
+  href: string;
+  /** Meerregelig, bv. het adres. */
+  html?: string;
+  /** Zonder hover-effect (het adres is geen echte link). */
+  plain?: boolean;
+}
+
+interface Props {
+  header?: string;
+  links: Link[];
+}
+
+const { header, links } = Astro.props;
+---
+
+<div class="footer_links">
+  {header && <div class="footer_links-header">{header}</div>}
+  <slot name="top" />
+  <div class="footer_links-wrapper">
+    {
+      links.map((l) =>
+        l.plain ? (
+          <span class="footer_plain" set:html={l.html ?? l.label} />
+        ) : (
+          <a href={l.href} class="footer_link" set:html={l.html ?? l.label} />
+        ),
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .footer_links {
+    grid-column-gap: var(--space--2);
+    grid-row-gap: var(--space--2);
+    flex-flow: column;
+    display: flex;
+  }
+
+  .footer_links-header {
+    font-weight: var(--h6--font-weight);
+  }
+
+  .footer_links-wrapper {
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+    flex-flow: column;
+    display: flex;
+  }
+
+  .footer_link {
+    padding-top: 0;
+    padding-bottom: 0;
+    position: relative;
+    transition: var(--animation-fast);
+  }
+
+  .footer_link::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--swatch--brand);
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 40%;
+    transform: rotate(4deg) translateX(-2rem);
+    transition: var(--animation-smooth);
+    opacity: 0;
+  }
+
+  .footer_link:hover::before {
+    transform: rotate(0deg) translateX(-1rem);
+    opacity: 1;
+  }
+
+  .footer_link:hover {
+    color: var(--swatch--brand);
+  }
+
+  @media screen and (max-width: 479px) {
+    .footer_links {
+      grid-column-gap: var(--space--1);
+      grid-row-gap: var(--space--1);
+      align-items: flex-start;
+    }
+  }
+</style>

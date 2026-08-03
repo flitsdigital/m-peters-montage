@@ -1,0 +1,687 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ThemeDemo from "../components/dev/ThemeDemo.astro";
+import {
+  SWATCHES,
+  THEME_TOKENS,
+  BUTTON_TOKENS,
+  TYPE_STYLES,
+  SIZES,
+  SPACES,
+  SECTION_SPACES,
+  RADII,
+  BREAKPOINTS,
+} from "../design-system/tokens";
+
+const TYPE_PROPS = [
+  "font-family",
+  "font-size",
+  "line-height",
+  "font-weight",
+  "letter-spacing",
+  "text-transform",
+] as const;
+
+const ALL_TOKENS = [
+  ...SWATCHES,
+  ...THEME_TOKENS,
+  ...BUTTON_TOKENS,
+  ...SIZES.map((s) => `--size--${s}`),
+  ...SPACES.map((n) => `--space--${n}`),
+  ...SECTION_SPACES.filter((s) => s !== "even").map((s) => `--section-space--${s}`),
+  ...RADII.map((r) => `--radius--${r}`),
+  "--border-width--main",
+  "--site--width",
+  "--site--margin",
+  "--site--gutter",
+  "--site--column-count",
+  "--container--main",
+  "--container--small",
+  "--container--full",
+  "--column-width--1",
+  "--nav--height",
+  "--cutout-size",
+  "--font--primary-family",
+  "--font--secondary-family",
+  "--ease-default",
+  "--ease-spring",
+  "--animation-smooth",
+  "--animation-fast",
+];
+---
+
+<BaseLayout
+  title="Styleguide — M. Peters Montage"
+  noindex
+  analytics={false}
+  canonicalPath="/styleguide"
+>
+  <main class="sg">
+    <header class="sg-hero">
+      <p class="sg-kicker">Design system</p>
+      <h1>Styleguide</h1>
+      <p class="u-text-style-large">
+        Levend overzicht. Alle waarden worden in de browser uit de CSS gelezen — pas
+        <code>src/styles/tokens.css</code> aan en deze pagina volgt vanzelf.
+      </p>
+    </header>
+
+    <!-- ================================================== SWATCHES ==== -->
+    <section class="sg-section" id="swatches">
+      <h2>Swatches</h2>
+      <p class="sg-note">Laag 1 — theme-agnostische primitives.</p>
+      <div class="sg-swatches">
+        {
+          SWATCHES.map((token) => (
+            <div class="sg-swatch">
+              <div class="sg-swatch-chip" style={`background:var(${token})`} />
+              <code>{token}</code>
+              <span class="sg-value" data-token={token} />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ==================================================== THEMES ==== -->
+    <section class="sg-section" id="themes">
+      <h2>Themes</h2>
+      <p class="sg-note">
+        Themes worden met het attribuut <code>data-theme</code> gezet, niet met een class.
+        <code>&lt;body&gt;</code> staat op élke inhoudspagina op <code>dark</code> — dat is
+        de basis waar alle secties tegenaan hangen.
+      </p>
+
+      <p class="sg-label">
+        Sectie-niveau, binnen <code>body[data-theme="dark"]</code>:
+      </p>
+      <div class="sg-theme-grid">
+        {
+          (["inherit", "light", "dark", "invert"] as const).map((t) => (
+            <div class="sg-theme-col">
+              <p class="sg-label">
+                <code>data-theme="{t}"</code>
+              </p>
+              <div data-theme={t} class="sg-theme-demo">
+                <ThemeDemo />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <h3>Genest: <code>invert</code> in een dark sectie</h3>
+      <p class="sg-note">
+        Dit is het enige nestpatroon dat op de site voorkomt — het contactformulier
+        (<code>contact_component</code>) zit als <code>invert</code> in
+        <code>section_contact</code> (<code>dark</code>) en wordt daardoor licht.
+      </p>
+      <div data-theme="dark" class="sg-theme-demo sg-nest-outer">
+        <p class="sg-label">buiten: <code>dark</code></p>
+        <ThemeDemo />
+        <div data-theme="invert" class="sg-theme-demo sg-nested">
+          <p class="sg-label">binnen: <code>invert</code> → light</p>
+          <ThemeDemo />
+        </div>
+      </div>
+      <p class="sg-note sg-warn">
+        ⚠︎ Beperking uit het origineel: <code>invert</code> kijkt niet naar de
+        <em>dichtstbijzijnde</em> theme-parent maar naar <em>elke</em> theme-parent. Zit er
+        zowel een <code>light</code> als een <code>dark</code> voorouder boven een
+        <code>invert</code>, dan wint de laatste regel in de CSS (dark). Op deze site
+        gebeurt dat nergens — de nesting is nooit dieper dan één niveau onder
+        <code>body</code>. 1-op-1 overgenomen; niet "gefixt".
+      </p>
+
+      <h3>Semantische tokens per theme</h3>
+      <div class="sg-theme-tokens">
+        {
+          (["light", "dark"] as const).map((t) => (
+            <div data-theme={t} class="sg-theme-tokenbox">
+              <p class="sg-label">
+                <code>data-theme="{t}"</code>
+              </p>
+              {[...THEME_TOKENS, ...BUTTON_TOKENS].map((token) => (
+                <div class="sg-token-row">
+                  <span
+                    class="sg-token-dot"
+                    style={`background:var(${token})`}
+                  />
+                  <code>{token}</code>
+                  <span class="sg-value" data-token={token} data-scope="closest" />
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ================================================ TYPOGRAFIE ==== -->
+    <section class="sg-section" id="typografie">
+      <h2>Typografie</h2>
+      <p class="sg-note">
+        Nexa (400 / 700 / 900, elk met italic) · PP Supply Sans Bold. Alle groottes ≥ 2rem
+        zijn fluid tussen 20rem en 90rem viewport.
+      </p>
+      {
+        TYPE_STYLES.map((style) => (
+          <div class="sg-type-row">
+            <div class="sg-type-sample" data-type-style={style}>
+              <span style={`font: var(--${style}--font-weight) var(--${style}--font-size)/var(--${style}--line-height) var(--${style}--font-family); letter-spacing: var(--${style}--letter-spacing); text-transform: var(--${style}--text-transform); display:block;`}>
+                Montage in Emmen
+              </span>
+            </div>
+            <dl class="sg-type-meta">
+              <div>
+                <dt>token</dt>
+                <dd>
+                  <code>--{style}--*</code>
+                </dd>
+              </div>
+              {TYPE_PROPS.map((p) => (
+                <div>
+                  <dt>{p}</dt>
+                  <dd class="sg-value" data-token={`--${style}--${p}`} />
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))
+      }
+
+      <h3>Font-weights</h3>
+      <div class="sg-weights">
+        <p style="font-weight:400">400 — Nexa Book</p>
+        <p style="font-weight:400; font-style:italic">400 italic</p>
+        <p style="font-weight:500">500 — medium (valt terug op Book)</p>
+        <p style="font-weight:700">700 — Nexa Bold</p>
+        <p style="font-weight:700; font-style:italic">700 italic</p>
+        <p style="font-weight:900">900 — Nexa Black</p>
+        <p style="font-weight:900; font-style:italic">900 italic</p>
+        <p style="font-family:var(--font--secondary-family); font-weight:700">
+          PP Supply Sans Bold — secondary family
+        </p>
+      </div>
+    </section>
+
+    <!-- =================================================== SPACING ==== -->
+    <section class="sg-section" id="spacing">
+      <h2>Spacing</h2>
+
+      <h3>Space-schaal</h3>
+      <div class="sg-bars">
+        {
+          SPACES.map((n) => (
+            <div class="sg-bar-row">
+              <code>--space--{n}</code>
+              <div class="sg-bar" style={`width:var(--space--${n})`} />
+              <span class="sg-value" data-token={`--space--${n}`} />
+            </div>
+          ))
+        }
+      </div>
+
+      <h3>Size-schaal <span class="sg-note-inline">(≥ 2rem is fluid)</span></h3>
+      <div class="sg-bars">
+        {
+          SIZES.map((s) => (
+            <div class="sg-bar-row">
+              <code>--size--{s}</code>
+              <div class="sg-bar" style={`width:var(--size--${s})`} />
+              <span class="sg-value" data-token={`--size--${s}`} />
+            </div>
+          ))
+        }
+      </div>
+
+      <h3>Sectie-spacing <span class="sg-note-inline">(data-padding-top/bottom)</span></h3>
+      <div class="sg-bars">
+        {
+          SECTION_SPACES.map((s) => (
+            <div class="sg-bar-row">
+              <code>{s}</code>
+              <div
+                class="sg-bar"
+                style={
+                  s === "even"
+                    ? "width:var(--site--margin)"
+                    : `width:var(--section-space--${s})`
+                }
+              />
+              <span
+                class="sg-value"
+                data-token={s === "even" ? "--site--margin" : `--section-space--${s}`}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ====================================== RADII / BORDERS / FOCUS = -->
+    <section class="sg-section" id="radii">
+      <h2>Radii, borders &amp; focus</h2>
+      <div class="sg-radii">
+        {
+          RADII.map((r) => (
+            <div class="sg-radius">
+              <div class="sg-radius-box" style={`border-radius:var(--radius--${r})`} />
+              <code>--radius--{r}</code>
+              <span class="sg-value" data-token={`--radius--${r}`} />
+            </div>
+          ))
+        }
+        <div class="sg-radius">
+          <div class="sg-radius-box sg-bordered" />
+          <code>--border-width--main</code>
+          <span class="sg-value" data-token="--border-width--main"></span>
+        </div>
+        <div class="sg-radius">
+          <button class="sg-focus-demo" type="button">Tab hierheen</button>
+          <code>--focus--width / --focus--offset-outer</code>
+          <span class="sg-value" data-token="--focus--width"></span>
+        </div>
+      </div>
+      <p class="sg-note">
+        Er zijn geen shadow-tokens in het origineel — de site gebruikt nergens
+        <code>box-shadow</code>.
+      </p>
+    </section>
+
+    <!-- ====================================================== GRID ==== -->
+    <section class="sg-section" id="grid">
+      <h2>Grid &amp; containers</h2>
+      <p class="sg-note">
+        12 koloms, gutter <code>--site--gutter</code>, buitenmarge
+        <code>--site--margin</code> (fluid 1rem → 3rem). Onder 991px klapt
+        <code>.u-grid-desktop</code> naar een flex-kolom.
+      </p>
+      <div class="sg-grid-demo u-grid-desktop">
+        {Array.from({ length: 12 }, (_, i) => <div class="sg-grid-cell">{i + 1}</div>)}
+      </div>
+      <dl class="sg-kv">
+        {
+          [
+            "--site--width",
+            "--site--column-count",
+            "--site--gutter",
+            "--site--margin",
+            "--container--main",
+            "--container--small",
+            "--container--full",
+            "--column-width--1",
+          ].map((t) => (
+            <div>
+              <dt>
+                <code>{t}</code>
+              </dt>
+              <dd class="sg-value" data-token={t} />
+            </div>
+          ))
+        }
+      </dl>
+
+      <h3>Breakpoints</h3>
+      <dl class="sg-kv">
+        {
+          Object.entries(BREAKPOINTS).map(([name, px]) => (
+            <div>
+              <dt>{name}</dt>
+              <dd>max-width: {px}px</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <!-- ================================================ TOKENTABEL ==== -->
+    <section class="sg-section" id="tokens">
+      <h2>Tokentabel</h2>
+      <p class="sg-note">
+        {ALL_TOKENS.length} tokens. "Resolved" is de berekende waarde in deze viewport.
+      </p>
+      <div class="sg-table-wrap">
+        <table class="sg-table">
+          <thead>
+            <tr><th>Token</th><th>Resolved</th></tr>
+          </thead>
+          <tbody>
+            {
+              ALL_TOKENS.map((t) => (
+                <tr>
+                  <td><code>{t}</code></td>
+                  <td class="sg-value" data-token={t} />
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  // Resolve elke [data-token] tegen de dichtstbijzijnde themed parent
+  // (voor semantische tokens) of tegen :root (voor primitives).
+  function paint() {
+    document.querySelectorAll<HTMLElement>("[data-token]").forEach((el) => {
+      const token = el.dataset.token!;
+      const scope =
+        el.dataset.scope === "closest"
+          ? (el.closest("[data-theme]") as HTMLElement) ?? document.documentElement
+          : document.documentElement;
+      const raw = getComputedStyle(scope).getPropertyValue(token).trim();
+      el.textContent = raw || "—";
+    });
+  }
+  paint();
+  addEventListener("resize", () => requestAnimationFrame(paint));
+</script>
+
+<style is:global>
+  /* ---- styleguide chrome — bewust géén design-system tokens waar het puur
+         om de leesbaarheid van deze pagina gaat, zodat de tokens zelf niet
+         "meebewegen" met de presentatie. ---- */
+  .sg {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: var(--size--4rem) var(--site--margin) var(--size--10rem);
+  }
+  .sg-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+  .sg-hero {
+    padding-bottom: var(--size--3rem);
+    border-bottom: 1px solid var(--theme--border);
+  }
+  .sg-section {
+    padding-block: var(--size--4rem);
+    border-bottom: 1px solid var(--theme--border);
+  }
+  .sg-section > h2 {
+    font-size: var(--size--2rem);
+    margin-bottom: 0.5rem;
+  }
+  .sg-section h3 {
+    margin-top: var(--size--3rem);
+    font-size: 1.125rem;
+  }
+  .sg-note,
+  .sg-note-inline {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    max-width: 60ch;
+  }
+  .sg-note-inline {
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .sg-label {
+    font-size: 0.75rem;
+    opacity: 0.65;
+    margin-bottom: 0.5rem;
+    text-transform: none;
+  }
+  .sg code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    vertical-align: baseline;
+  }
+  .sg-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    vertical-align: baseline;
+    word-break: break-all;
+  }
+
+  /* swatches */
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .sg-swatch {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+  }
+  .sg-swatch-chip {
+    width: 100%;
+    height: 4.5rem;
+    border: 1px solid var(--theme--border);
+    border-radius: var(--radius--small);
+    background-image: linear-gradient(45deg, #eee 25%, transparent 25%),
+      linear-gradient(-45deg, #eee 25%, transparent 25%);
+    background-size: 12px 12px;
+  }
+
+  /* themes */
+  .sg-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .sg-nest-outer {
+    margin-top: 1rem;
+  }
+  .sg-warn {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--swatch--brand);
+    background: color-mix(in srgb, var(--swatch--brand) 8%, transparent);
+    opacity: 1;
+  }
+  .sg-theme-demo {
+    padding: 1.25rem;
+    border: 1px solid var(--theme--border);
+    border-radius: var(--radius--small);
+  }
+  .sg-nested {
+    margin-top: 1rem;
+  }
+  .sg-demo-btn {
+    background: var(--button--background);
+    color: var(--button--text);
+    border: var(--border-width--main) solid var(--button--border);
+    padding: 0.6rem 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    transition: var(--animation-fast);
+  }
+  .sg-demo-btn:hover {
+    background: var(--button--background-hover);
+    color: var(--button--text-hover);
+    border-color: var(--button--border-hover);
+  }
+  .sg-demo-secondary {
+    background: var(--theme--background-secondary);
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+  }
+  .sg-theme-tokens {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .sg-theme-tokenbox {
+    padding: 1rem;
+    border: 1px solid var(--theme--border);
+    border-radius: var(--radius--small);
+  }
+  .sg-token-row {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, auto) minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.2rem;
+  }
+  .sg-token-dot {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: 2px;
+  }
+
+  /* typografie */
+  .sg-type-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: 1.5rem;
+    align-items: start;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--theme--border);
+  }
+  .sg-type-row:first-of-type {
+    border-top: 0;
+  }
+  .sg-type-meta {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0;
+    font-size: 0.7rem;
+  }
+  .sg-type-meta > div {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  .sg-type-meta dt {
+    opacity: 0.5;
+  }
+  .sg-type-meta dd {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    word-break: break-all;
+  }
+  .sg-weights p {
+    margin-block: 0.25rem;
+    text-transform: none;
+  }
+
+  /* spacing */
+  .sg-bars {
+    display: grid;
+    gap: 0.3rem;
+    margin-top: 1rem;
+  }
+  .sg-bar-row {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr) 12rem;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .sg-bar {
+    height: 0.85rem;
+    background: var(--swatch--brand);
+    min-width: 1px;
+  }
+
+  /* radii */
+  .sg-radii {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .sg-radius {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+  }
+  .sg-radius-box {
+    width: 100%;
+    height: 4rem;
+    background: var(--theme--background-secondary);
+    border: 1px solid var(--theme--border);
+  }
+  .sg-bordered {
+    border: var(--border-width--main) solid var(--swatch--brand);
+    background: transparent;
+  }
+  .sg-focus-demo {
+    width: 100%;
+    height: 4rem;
+    border: 1px dashed var(--theme--border);
+    font-size: 0.8rem;
+  }
+
+  /* grid */
+  .sg-grid-demo {
+    margin-top: 1.25rem;
+  }
+  .sg-grid-cell {
+    background: color-mix(in srgb, var(--swatch--brand) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--swatch--brand) 35%, transparent);
+    text-align: center;
+    font-size: 0.7rem;
+    padding-block: 0.75rem;
+    grid-column: auto / span 1;
+  }
+  .sg-kv {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+  .sg-kv > div {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+  .sg-kv dt {
+    opacity: 0.6;
+  }
+  .sg-kv dd {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+  }
+
+  /* tabel */
+  .sg-table-wrap {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .sg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+  }
+  .sg-table th,
+  .sg-table td {
+    text-align: left;
+    padding: 0.35rem 0.75rem 0.35rem 0;
+    border-bottom: 1px solid var(--theme--border);
+    vertical-align: baseline;
+  }
+  .sg-table th {
+    opacity: 0.5;
+    font-weight: 400;
+  }
+
+  @media (max-width: 767px) {
+    .sg-type-row,
+    .sg-bar-row,
+    .sg-kv > div,
+    .sg-type-meta > div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

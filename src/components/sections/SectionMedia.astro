@@ -1,0 +1,232 @@
+---
+/**
+ * Tekst-met-beeld sectie — dekt zowel `section_content` (41×) als
+ * `section_over` (14×). Verschil zit in kolomverdeling, volgorde en of het
+ * beeld doorloopt buiten de sectie:
+ *
+ * - variant "content": beeld links op 6 kolommen (aspect 660/760),
+ *   tekst rechts op kolom 8–12, verticaal gecentreerd.
+ * - variant "over":    tekst links op kolom 2–7, beeld rechts op 5 kolommen
+ *   en overhangend (100% + section-space + 8rem). Secundaire achtergrond.
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+import Visual from "../molecules/Visual.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import Button from "../atoms/Button.astro";
+import Icon from "../atoms/Icon.astro";
+import { SITE } from "../../data/site";
+import type { IconName } from "../atoms/Icon.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  variant?: "content" | "over";
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  image: ImageMetadata | string;
+  alt: string;
+  cta?: { label: string; href: string };
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+  /** Zoom-hover op het beeld (data-img-container in het origineel). */
+  zoom?: boolean;
+  /** Sectie ligt op de secundaire achtergrond — cutouts kleuren mee. */
+  background?: "secondary";
+  /** Facebook-knop onder de tekst (over-mij). */
+  showSocials?: boolean;
+  id?: string;
+}
+
+const {
+  variant = "content",
+  heading,
+  eyebrow,
+  image,
+  alt,
+  cta,
+  paddingTop = "main",
+  paddingBottom = "main",
+  zoom = false,
+  background,
+  showSocials = false,
+  id,
+} = Astro.props;
+
+const isOver = variant === "over";
+const name = [
+  isOver ? "section_over" : "section_content",
+  background === "secondary" && "is-secondary",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<SectionShell
+  {id}
+  {name}
+  theme={isOver ? "dark" : "inherit"}
+  {paddingTop}
+  {paddingBottom}
+>
+  <div class:list={["u-grid-desktop", !isOver && "content_layout"]}>
+    {
+      isOver ? (
+        <Fragment>
+          <div class="over_content u-column-custom">
+            {eyebrow && (
+              <Eyebrow
+                text={eyebrow.text}
+                icon={eyebrow.icon}
+                variant={eyebrow.variant}
+              />
+            )}
+            <h2>{heading}</h2>
+            <RichText><slot /></RichText>
+            {showSocials && (
+              <div class="u-mt-6">
+                <div class="over_socials-wrap">
+                  <a
+                    href={SITE.social.facebook}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Facebook"
+                    class="over_socials-item"
+                  >
+                    <Icon name="facebook" />
+                  </a>
+                </div>
+              </div>
+            )}
+            {cta && (
+              <div class="u-mt-4">
+                <Button label={cta.label} href={cta.href} icon="phone" />
+              </div>
+            )}
+          </div>
+          <div class="over_img-wrap u-column-5">
+            <div class:list={["over_img-wrap_inner", zoom && "is-zoom"]}>
+              <Visual src={image} {alt} sizes="(max-width: 767px) 100vw, 40vw" />
+            </div>
+          </div>
+        </Fragment>
+      ) : (
+        <Fragment>
+          <div class:list={["content_img-wrap u-column-6", zoom && "is-zoom"]}>
+            <Visual src={image} {alt} sizes="(max-width: 991px) 100vw, 50vw" />
+          </div>
+          <div class="content_content-wrapper u-column-custom">
+            {eyebrow && (
+              <Eyebrow
+                text={eyebrow.text}
+                icon={eyebrow.icon}
+                variant={eyebrow.variant}
+              />
+            )}
+            <h2>{heading}</h2>
+            <RichText><slot /></RichText>
+            {showSocials && (
+              <div class="u-mt-6">
+                <div class="over_socials-wrap">
+                  <a
+                    href={SITE.social.facebook}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Facebook"
+                    class="over_socials-item"
+                  >
+                    <Icon name="facebook" />
+                  </a>
+                </div>
+              </div>
+            )}
+            {cta && (
+              <div class="u-mt-4">
+                <Button label={cta.label} href={cta.href} icon="phone" />
+              </div>
+            )}
+          </div>
+        </Fragment>
+      )
+    }
+  </div>
+</SectionShell>
+
+<style>
+  /* ---- variant "content" ---- */
+  .content_layout {
+    align-items: center;
+  }
+
+  .content_img-wrap {
+    aspect-ratio: 660 / 760;
+    position: relative;
+  }
+
+  .content_content-wrapper {
+    grid-column: 8 / span 5;
+  }
+
+  :global(.section_content.is-secondary) {
+    background-color: var(--theme--background-secondary);
+    --cutout-background: var(--theme--background-secondary);
+  }
+
+  /* ---- variant "over" ---- */
+  :global(.section_over) {
+    z-index: 99;
+    background-color: var(--theme--background-secondary);
+    /* Buttons in deze sectie liggen op de secundaire achtergrond. */
+    --cutout-background: var(--theme--background-secondary);
+  }
+
+  .over_content {
+    grid-column: 2 / span 6;
+  }
+
+  .over_img-wrap {
+    position: relative;
+  }
+
+  .over_img-wrap_inner {
+    height: calc(100% + var(--section-space--main) + 8rem);
+    position: absolute;
+    inset: 0%;
+  }
+
+  /* ---- socials (over-mij) ---- */
+  .over_socials-wrap {
+    grid-column-gap: var(--size--1rem);
+    grid-row-gap: var(--size--1rem);
+    display: flex;
+  }
+
+  .over_socials-item {
+    width: var(--size--3rem);
+    height: var(--size--3rem);
+    padding: var(--size--0-5rem);
+    background-color: var(--theme--background-secondary);
+    display: flex;
+  }
+
+  /* ---- zoom-hover ---- */
+  .is-zoom {
+    overflow: clip;
+  }
+
+  .is-zoom :global(img) {
+    transform: scale(1.2);
+    transition: transform 0.5s var(--ease-default);
+  }
+
+  .is-zoom:hover :global(img) {
+    transform: scale(1);
+  }
+
+  @media screen and (max-width: 479px) {
+    .over_img-wrap_inner {
+      aspect-ratio: 1;
+      position: relative;
+    }
+  }
+</style>

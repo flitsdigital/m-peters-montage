@@ -1,0 +1,105 @@
+---
+/**
+ * Projectdetailpagina — /projecten/{slug}.
+ * Vaste opbouw (zoals het Webflow-template): kop met hoofdfoto, galerij,
+ * andere projecten, contact.
+ */
+import PageLayout from "../../layouts/PageLayout.astro";
+import HeaderCentered from "../../components/sections/HeaderCentered.astro";
+import SectionProjectImages from "../../components/sections/SectionProjectImages.astro";
+import SectionProjecten from "../../components/sections/SectionProjecten.astro";
+import SectionContact from "../../components/sections/SectionContact.astro";
+import PortableText from "../../sanity/PortableText.astro";
+import { imageProps, urlFor } from "../../sanity/client";
+
+export async function getStaticPaths() {
+  const { sanityClient } = await import("sanity:client");
+  const { PROJECT_SLUGS_QUERY } = await import("../../sanity/queries");
+  const projects = await sanityClient.fetch(PROJECT_SLUGS_QUERY);
+  return projects.map(({ slug }: { slug: string }) => ({ params: { slug } }));
+}
+
+const { fetchProject, fetchContactSection } = await import("../../sanity/queries");
+
+const { slug } = Astro.params;
+const project = await fetchProject(slug!);
+if (!project) return Astro.rewrite("/404");
+
+const contact = await fetchContactSection();
+
+const cover = imageProps(project.coverImage);
+const gallery = (project.gallery ?? []).flatMap((image: any) => {
+  const props = imageProps(image, 1200);
+  return props ? [{ src: props.src, alt: props.alt || project.title }] : [];
+});
+
+const related = (project.related ?? []).flatMap((p: any) => {
+  const image = imageProps(p.coverImage, 800);
+  return image
+    ? [
+        {
+          href: `/projecten/${p.slug}`,
+          title: p.title,
+          text: p.summary,
+          image: image.src,
+          alt: image.alt || p.title,
+          tags: p.tags ?? [],
+        },
+      ]
+    : [];
+});
+
+const ogImage = project.coverImage?.asset
+  ? urlFor(project.coverImage).width(1200).height(630).url()
+  : undefined;
+---
+
+<PageLayout
+  title={project.metaTitle || `${project.title} | M. Peters Montage`}
+  description={project.metaDescription || project.summary}
+  canonicalPath={`/projecten/${slug}`}
+  ogType="article"
+  {ogImage}
+>
+  <HeaderCentered
+    heading={project.title}
+    body={project.summary}
+    image={cover?.src}
+    alt={cover?.alt || project.title}
+    breadcrumbs={[
+      { label: "Home", href: "/" },
+      { label: "Projecten", href: "/projecten" },
+      { label: project.title, href: `/projecten/${slug}` },
+    ]}
+  />
+
+  {
+    gallery.length > 0 && (
+      <SectionProjectImages images={gallery}>
+        <PortableText value={project.body} />
+      </SectionProjectImages>
+    )
+  }
+
+  {
+    related.length > 0 && (
+      <SectionProjecten
+        heading="Ik denk dat je deze projecten ook leuk vindt!"
+        projects={related}
+        theme="light"
+      />
+    )
+  }
+
+  {
+    contact && (
+      <SectionContact
+        heading={contact.heading}
+        eyebrow={contact.eyebrow}
+        formHeading={contact.formHeading}
+      >
+        <PortableText value={contact.body} />
+      </SectionContact>
+    )
+  }
+</PageLayout>

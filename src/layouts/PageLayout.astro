@@ -1,0 +1,32 @@
+---
+/**
+ * Standaard paginaskelet: nav + <main> + footer, binnen de BaseLayout.
+ * Reproduceert de page_wrap / page_main-structuur uit het origineel.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import Navbar from "../components/sections/Navbar.astro";
+import Footer from "../components/sections/Footer.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+  noindex?: boolean;
+  localBusiness?: boolean;
+}
+
+const props = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<BaseLayout {...props}>
+  <div class="page_wrap">
+    <Navbar {path} />
+    <main class="page_main">
+      <slot />
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>

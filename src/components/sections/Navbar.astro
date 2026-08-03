@@ -1,0 +1,373 @@
+---
+/**
+ * Vaste navbar + overlay-menu.
+ *
+ * Het origineel animeert het menu met een GSAP-timeline (hamburger roteert,
+ * paneel schuift in via xPercent, achtergrond-stagger, links stagger-in).
+ * Hier gedaan met CSS-transitions op een `open`-state — zelfde timing en
+ * richting, zonder GSAP + jQuery in de bundle.
+ */
+import Logo from "../atoms/Logo.astro";
+import Button from "../atoms/Button.astro";
+import NavDropdown from "../molecules/NavDropdown.astro";
+import { DIENSTEN, NAV_LINKS, NAV_MENU_LINKS } from "../../data/navigation";
+
+interface Props {
+  /** Huidig pad, voor aria-current. */
+  path?: string;
+}
+
+const { path } = Astro.props;
+---
+
+<div class="nav_wrap">
+  <nav class="nav">
+    <div class="nav_container u-container-full">
+      <div class="u-hflex-left-center u-gap-4">
+        <a aria-label="ga naar home" href="/" class="nav_logo-wrap"><Logo variant="nav" /></a>
+        <div class="nav_links-wrap">
+          <NavDropdown label="Diensten" items={DIENSTEN} />
+          {
+            NAV_LINKS.map((l) => (
+              <a
+                href={l.href}
+                class="nav_link"
+                aria-current={path === l.href ? "page" : undefined}
+              >
+                {l.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="nav_btn-wrap">
+        <div class="hide-mobile">
+          <Button
+            label="Contact opnemen"
+            href="/contact"
+            icon="phone"
+            current={path === "/contact"}
+          />
+        </div>
+        <button
+          type="button"
+          class="nav_menu-btn"
+          data-menu-toggle
+          aria-label="Menu openen"
+          aria-expanded="false"
+          aria-controls="nav-menu"
+        >
+          <div class="nav_menu-btn-linewrap">
+            <div class="nav_menu-btn-line1"></div>
+            <div class="nav_menu-btn-line2"></div>
+          </div>
+          <div class="nav_menu-btn_bg"></div>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="nav-menu" data-nav="closed" class="nav_menu">
+    <div class="nav_menu-wrap">
+      <div class="nav_menu-bg"></div>
+      <div class="nav_menu-inner">
+        {
+          NAV_MENU_LINKS.map((l) => (
+            <div class="nav_menu-link-wrap">
+              <a
+                href={l.href}
+                class="nav_menu-link"
+                aria-current={path === l.href ? "page" : undefined}
+              >
+                {l.label}
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <button type="button" data-menu-toggle class="nav_overlay" aria-label="Menu sluiten"
+    ></button>
+  </div>
+</div>
+
+<script>
+  const menu = document.querySelector<HTMLElement>(".nav_menu");
+  const button = document.querySelector<HTMLElement>(".nav_menu-btn");
+  const toggles = document.querySelectorAll<HTMLElement>("[data-menu-toggle]");
+
+  if (menu && button) {
+    const setState = (open: boolean) => {
+      menu.dataset.nav = open ? "open" : "closed";
+      button.setAttribute("aria-expanded", String(open));
+      button.setAttribute("aria-label", open ? "Menu sluiten" : "Menu openen");
+      document.body.classList.toggle("no-scroll", open);
+    };
+
+    toggles.forEach((t) =>
+      t.addEventListener("click", () => setState(menu.dataset.nav === "closed")),
+    );
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && menu.dataset.nav === "open") setState(false);
+    });
+  }
+</script>
+
+<style>
+  .nav {
+    z-index: 999;
+    background-color: var(--theme--background-secondary);
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    position: fixed;
+    inset: 0% 0% auto;
+    /* De button ligt op de secundaire achtergrond; cutouts kleuren mee. */
+    --cutout-background: var(--theme--background-secondary);
+  }
+
+  .nav_container {
+    min-height: var(--nav--height);
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: flex;
+  }
+
+  .nav_logo-wrap {
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+
+  .nav_links-wrap {
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+
+  .nav_link {
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+  }
+
+  .nav_btn-wrap {
+    grid-column-gap: var(--size--1rem);
+    grid-row-gap: var(--size--1rem);
+    display: flex;
+  }
+
+  /* ---- hamburger ---- */
+  .nav_menu-btn {
+    width: var(--button--button-height);
+    height: var(--button--button-height);
+    padding: var(--space--4) var(--space--3);
+    grid-column-gap: var(--size--0-375rem);
+    grid-row-gap: var(--size--0-375rem);
+    aspect-ratio: 1;
+    cursor: pointer;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+  }
+
+  .nav_menu-btn-linewrap {
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+    flex-flow: column;
+    width: 100%;
+    display: flex;
+    z-index: 1;
+    transition: transform 0.6s var(--ease-default);
+  }
+
+  .nav_menu-btn-line1,
+  .nav_menu-btn-line2 {
+    background-color: var(--swatch--light-80);
+    width: 100%;
+    height: 2px;
+    transition: transform 0.4s var(--ease-default);
+  }
+
+  .nav_menu-btn_bg {
+    background-color: var(--swatch--light-faded);
+    position: absolute;
+    inset: 0%;
+    transition: var(--animation-fast);
+  }
+
+  .nav_menu-btn:hover .nav_menu-btn_bg {
+    transform: scale(0.9);
+  }
+
+  /* Open: hele wrapper 45°, lijn 1 nog eens 90° + naar elkaar toe → kruis. */
+  .nav_wrap:has(.nav_menu[data-nav="open"]) .nav_menu-btn-linewrap {
+    transform: rotate(45deg);
+  }
+
+  .nav_wrap:has(.nav_menu[data-nav="open"]) .nav_menu-btn-line1 {
+    transform: rotate(90deg) translateY(5px);
+  }
+
+  .nav_wrap:has(.nav_menu[data-nav="open"]) .nav_menu-btn-line2 {
+    transform: translateY(-5px);
+  }
+
+  /* ---- overlay-menu ---- */
+  .nav_menu {
+    z-index: 999;
+    margin-top: var(--nav--height);
+    height: calc(100svh - var(--nav--height));
+    position: fixed;
+    inset: 0%;
+    display: block;
+    visibility: hidden;
+  }
+
+  .nav_menu[data-nav="open"] {
+    visibility: visible;
+  }
+
+  .nav_overlay {
+    cursor: pointer;
+    background-color: color-mix(in srgb, var(--swatch--dark-100) 70%, transparent 20%);
+    position: absolute;
+    inset: 0%;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-default);
+  }
+
+  .nav_menu[data-nav="open"] .nav_overlay {
+    opacity: 1;
+  }
+
+  .nav_menu-wrap {
+    z-index: 99;
+    width: 50%;
+    padding-top: var(--size--2rem);
+    padding-bottom: var(--size--1rem);
+    padding-left: var(--size--1rem);
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-end;
+    display: flex;
+    position: absolute;
+    inset: 0% 0% 0% auto;
+    transform: translateX(120%);
+    transition: transform 1s var(--ease-default);
+  }
+
+  .nav_menu[data-nav="open"] .nav_menu-wrap {
+    transform: translateX(0);
+  }
+
+  .nav_menu-bg {
+    margin-right: var(--size--1rem);
+    margin-bottom: var(--size--1rem);
+    margin-left: var(--size--1rem);
+    background-color: var(--swatch--dark-80);
+    height: calc(100% - 1rem);
+    position: absolute;
+    inset: 1rem 0% auto;
+    transform: translateX(101%);
+    transition: transform 0.75s var(--ease-default);
+  }
+
+  .nav_menu[data-nav="open"] .nav_menu-bg {
+    transform: translateX(0);
+  }
+
+  .nav_menu-inner {
+    width: 100%;
+    padding-right: var(--site--margin);
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-end;
+    display: flex;
+    position: relative;
+  }
+
+  .nav_menu-link-wrap {
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .nav_menu-link {
+    width: 100%;
+    padding-top: var(--size--1rem);
+    padding-bottom: var(--size--1rem);
+    opacity: 0.6;
+    font-family: var(--font--primary-family);
+    font-size: var(--size--3rem);
+    text-align: right;
+    text-transform: uppercase;
+    font-weight: 900;
+    transition:
+      opacity 0.2s,
+      transform 0.5s var(--ease-default);
+    transform: translateY(100%);
+  }
+
+  .nav_menu-link:hover {
+    opacity: 1;
+  }
+
+  .nav_menu[data-nav="open"] .nav_menu-link {
+    transform: translateY(0);
+  }
+
+  /* Stagger 0.1s per link, zoals de GSAP-timeline in het origineel. */
+  .nav_menu-link-wrap:nth-child(1) .nav_menu-link {
+    transition-delay: 0.5s;
+  }
+  .nav_menu-link-wrap:nth-child(2) .nav_menu-link {
+    transition-delay: 0.6s;
+  }
+  .nav_menu-link-wrap:nth-child(3) .nav_menu-link {
+    transition-delay: 0.7s;
+  }
+  .nav_menu-link-wrap:nth-child(4) .nav_menu-link {
+    transition-delay: 0.8s;
+  }
+  .nav_menu-link-wrap:nth-child(5) .nav_menu-link {
+    transition-delay: 0.9s;
+  }
+
+  .nav_menu[data-nav="closed"] .nav_menu-link {
+    transition-delay: 0s;
+  }
+
+  @media screen and (max-width: 767px) {
+    .nav_links-wrap {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    .nav_container {
+      padding-right: var(--size--1rem);
+      padding-left: var(--size--1rem);
+    }
+
+    .nav_menu-wrap {
+      width: 100%;
+    }
+  }
+</style>

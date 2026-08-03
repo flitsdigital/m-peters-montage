@@ -1,0 +1,400 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/atoms/Button.astro";
+import TextLink from "../components/atoms/TextLink.astro";
+import Eyebrow from "../components/atoms/Eyebrow.astro";
+import Heading from "../components/atoms/Heading.astro";
+import Text from "../components/atoms/Text.astro";
+import RichText from "../components/atoms/RichText.astro";
+import Icon, { type IconName } from "../components/atoms/Icon.astro";
+import Logo from "../components/atoms/Logo.astro";
+import FlitsLogo from "../components/atoms/FlitsLogo.astro";
+import StarRating from "../components/atoms/StarRating.astro";
+import FormField from "../components/atoms/FormField.astro";
+import Divider from "../components/atoms/Divider.astro";
+
+const ICONS: IconName[] = [
+  "phone",
+  "mail",
+  "arrow-right",
+  "arrow-diagonal",
+  "chevron-down",
+  "star",
+  "star-rounded",
+  "quote",
+  "plus",
+  "arrow-simple",
+  "facebook",
+  "eyebrow-default",
+  "eyebrow-contact",
+  "eyebrow-diensten",
+  "eyebrow-reviews",
+  "utility-lock",
+  "utility-mark",
+];
+---
+
+<BaseLayout
+  title="Components — M. Peters Montage"
+  noindex
+  analytics={false}
+  canonicalPath="/components"
+>
+  <main class="cp">
+    <header class="cp-hero">
+      <p class="cp-kicker">Design system</p>
+      <h1>Atoms</h1>
+      <p class="u-text-style-large">
+        Elke atom in al zijn varianten, onder de themes waarin hij op de site voorkomt.
+      </p>
+    </header>
+
+    <!-- ==================================================== BUTTON ==== -->
+    <section class="cp-section">
+      <h2>Button</h2>
+      <p class="cp-props">
+        <code>label</code> · <code>href | type</code> · <code>style: primary|secondary</code> ·
+        <code>icon</code> · <code>cutouts: boolean</code>
+      </p>
+
+      <div class="cp-row" data-theme="light">
+        <span class="cp-tag">light</span>
+        <Button label="Contact opnemen" href="#" icon="phone" />
+        <Button label="Contact opnemen" href="#" icon="phone" cutouts={false} />
+      </div>
+      <div class="cp-row" data-theme="dark">
+        <span class="cp-tag">dark</span>
+        <Button label="Contact opnemen" href="#" icon="phone" />
+        <Button label="Verstuur" type="submit" icon="arrow-right" cutouts={false} />
+      </div>
+      <p class="cp-note">
+        Zelfde animatie voor elke button: donkere laag schuift van onder omhoog (0.8s),
+        cutout-hoekjes schuiven horizontaal weg (0.5s). De hoekjes kleuren automatisch mee
+        met de achtergrond (<code>--cutout-background</code>, default
+        <code>--theme--background</code>).
+      </p>
+    </section>
+
+    <!-- ================================================== TEXTLINK ==== -->
+    <section class="cp-section">
+      <h2>TextLink</h2>
+      <p class="cp-props"><code>label</code> · <code>icon</code></p>
+      <div class="cp-row" data-theme="light">
+        <span class="cp-tag">light</span>
+        <TextLink label="Meer lezen" />
+      </div>
+      <div class="cp-row" data-theme="dark">
+        <span class="cp-tag">dark</span>
+        <TextLink label="Meer lezen" />
+      </div>
+    </section>
+
+    <!-- =================================================== EYEBROW ==== -->
+    <section class="cp-section">
+      <h2>Eyebrow</h2>
+      <p class="cp-props">
+        <code>text</code> · <code>icon</code> ·
+        <code>variant: primary|secondary</code>
+      </p>
+      <div class="cp-row" data-theme="light">
+        <span class="cp-tag">light</span>
+        <Eyebrow text="Contact" icon="eyebrow-contact" />
+        <Eyebrow text="Reviews" icon="eyebrow-reviews" />
+        <Eyebrow text="Werkwijze" variant="secondary" />
+        <Eyebrow text="Diensten" icon="eyebrow-diensten" variant="secondary" />
+      </div>
+      <div class="cp-row" data-theme="dark">
+        <span class="cp-tag">dark</span>
+        <Eyebrow text="Contact" icon="eyebrow-contact" />
+        <Eyebrow text="Projecten" variant="secondary" />
+      </div>
+    </section>
+
+    <!-- =========================================== HEADING / TEXT ===== -->
+    <section class="cp-section">
+      <h2>Heading &amp; Text</h2>
+      <p class="cp-props">
+        Heading: <code>as: h1–h6</code> · <code>style: display|h1–h6</code> — semantiek en
+        visuele stijl los van elkaar. Text: <code>size: main|large|small</code>
+      </p>
+      <div class="cp-stack" data-theme="light">
+        <Heading as="h2" style="h1">h2 met stijl h1</Heading>
+        <Heading as="h2">h2 (default)</Heading>
+        <Heading as="h3">h3 (default)</Heading>
+        <Heading as="h1" style="h2">h1 met stijl h2 — het header-patroon</Heading>
+        <Heading as="h6">h6 — faq-titelstijl</Heading>
+        <Text size="large">Text large — intro's en heroteksten.</Text>
+        <Text>Text main — de standaard paragraaf.</Text>
+        <Text size="small">Text small — footnotes en metadata.</Text>
+      </div>
+    </section>
+
+    <!-- ================================================== RICHTEXT ==== -->
+    <section class="cp-section">
+      <h2>RichText</h2>
+      <p class="cp-props">Container voor CMS-content — typografie uit base.css.</p>
+      <div class="cp-stack" data-theme="light">
+        <RichText>
+          <h2>Wat zijn kunststof kozijnen?</h2>
+          <p>
+            Kunststof kozijnen zijn kozijnsystemen gemaakt van PVC, een
+            <a href="#">materiaal</a> dat bekendstaat om zijn duurzaamheid.
+          </p>
+          <ul>
+            <li>A-kwaliteit materialen</li>
+            <li>Professionele montage</li>
+            <li>Eerlijk advies en scherpe prijzen</li>
+          </ul>
+          <blockquote>
+            <strong>Pro-tip:</strong> vergeet ook de onderdorpel niet.
+          </blockquote>
+          <ol>
+            <li>Offerte bespreken &amp; inmeten</li>
+            <li>Materialen bestellen</li>
+          </ol>
+        </RichText>
+      </div>
+    </section>
+
+    <!-- ===================================================== ICONS ==== -->
+    <section class="cp-section">
+      <h2>Icon</h2>
+      <p class="cp-props"><code>name</code> — {ICONS.length} iconen, allemaal currentColor.</p>
+      <div class="cp-icons" data-theme="light">
+        {
+          ICONS.map((n) => (
+            <div class="cp-icon">
+              <span class="cp-icon-box">
+                <Icon name={n} />
+              </span>
+              <code>{n}</code>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ===================================================== LOGOS ==== -->
+    <section class="cp-section">
+      <h2>Logo &amp; FlitsLogo</h2>
+      <p class="cp-props">Logo: <code>variant: nav|footer</code></p>
+      <div class="cp-row" data-theme="dark">
+        <span class="cp-tag">dark</span>
+        <Logo variant="nav" />
+        <Logo variant="footer" />
+        <FlitsLogo />
+      </div>
+      <div class="cp-row" data-theme="light">
+        <span class="cp-tag">light</span>
+        <Logo variant="nav" />
+      </div>
+      <p class="cp-note">FlitsLogo: hover = flikker-animatie op de bliksem.</p>
+    </section>
+
+    <!-- ================================================ STARRATING ==== -->
+    <section class="cp-section">
+      <h2>StarRating</h2>
+      <p class="cp-props"><code>count</code> (default 5)</p>
+      <div class="cp-row" data-theme="light">
+        <span class="cp-tag">light</span>
+        <StarRating />
+        <StarRating count={3} />
+      </div>
+    </section>
+
+    <!-- ================================================= FORMFIELD ==== -->
+    <section class="cp-section">
+      <h2>FormField</h2>
+      <p class="cp-props">
+        <code>kind: text|email|tel|textarea|select</code> · <code>label</code> ·
+        <code>name</code> · <code>placeholder</code> · <code>required</code> ·
+        <code>labelWeight</code>
+      </p>
+      <p class="cp-note">
+        Het formulier staat op de site altijd in een licht blok
+        (<code>data-theme="invert"</code> in een dark sectie) op de secundaire
+        achtergrond — hieronder in dezelfde context.
+      </p>
+      <div data-theme="dark" class="cp-form-outer">
+        <div data-theme="invert" class="cp-form">
+          <div class="cp-form-grid">
+            <FormField label="Voornaam" name="Naam" placeholder="Michael" required />
+            <FormField
+              label="Woonplaats"
+              name="Woonplaats"
+              placeholder="Klazienaveen"
+              required
+            />
+          </div>
+          <div class="cp-form-grid">
+            <FormField
+              kind="email"
+              label="Email"
+              name="Email"
+              placeholder="michael@gmail.com"
+              required
+            />
+            <FormField
+              kind="tel"
+              label="Telefoonnummer"
+              name="Telefoonnummer"
+              placeholder="06 12 34 56 78"
+            />
+          </div>
+          <FormField
+            kind="select"
+            label="In welke dienst heb je interesse?"
+            name="Diensten"
+            placeholder="Kies een!"
+            labelWeight="medium"
+            options={[
+              "Kunststof Kozijnen",
+              "Veranda's",
+              "Zonwering",
+              "Glazen Schuifwanden",
+              "Rolluiken",
+            ]}
+          />
+          <FormField
+            kind="textarea"
+            label="Bericht"
+            name="Bericht"
+            placeholder="Jouw bericht"
+            labelWeight="medium"
+            required
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== DIVIDER ==== -->
+    <section class="cp-section">
+      <h2>Divider</h2>
+      <p class="cp-props"><code>theme: dark|light</code></p>
+      <p class="cp-note">
+        Themalaag over de onderste 25% van een sectie — maakt de overgang naar de zwarte
+        footer onder het contactformulier. Verborgen op &lt; 479px.
+      </p>
+      <div class="cp-divider-demo" data-theme="light">
+        <p>sectie-inhoud</p>
+        <Divider theme="dark" />
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  .cp {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: var(--size--4rem) var(--site--margin) var(--size--10rem);
+  }
+  .cp-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+  .cp-hero {
+    padding-bottom: var(--size--3rem);
+    border-bottom: 1px solid var(--theme--border);
+  }
+  .cp-section {
+    padding-block: var(--size--4rem);
+    border-bottom: 1px solid var(--theme--border);
+  }
+  .cp-section > h2 {
+    font-size: var(--size--2rem);
+    margin-bottom: 0.25rem;
+  }
+  .cp-props {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-transform: none;
+    margin-bottom: 1.25rem;
+  }
+  .cp-note {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    max-width: 60ch;
+    margin-top: 1rem;
+  }
+  .cp code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  .cp-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--theme--border);
+    margin-bottom: 0.75rem;
+    position: relative;
+  }
+  .cp-stack {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--theme--border);
+  }
+  .cp-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.65rem;
+    font-family: ui-monospace, Menlo, monospace;
+    opacity: 0.5;
+    padding: 0.25rem 0.5rem;
+  }
+  .cp-icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--theme--border);
+  }
+  .cp-icon {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    text-align: center;
+  }
+  .cp-icon-box {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cp-form-outer {
+    padding: 2rem;
+  }
+  .cp-form {
+    background-color: var(--theme--background-secondary);
+    padding: var(--size--3rem);
+    display: grid;
+    gap: var(--space--6);
+  }
+  .cp-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--site--gutter);
+  }
+  .cp-divider-demo {
+    position: relative;
+    height: 10rem;
+    border: 1px dashed var(--theme--border);
+    padding: 1rem;
+  }
+  @media (max-width: 767px) {
+    .cp-form-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

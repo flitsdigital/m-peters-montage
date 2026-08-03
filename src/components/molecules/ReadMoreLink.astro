@@ -1,0 +1,65 @@
+---
+/**
+ * "MEER LEZEN"-chip die over de beeldrand van een kaart zweeft
+ * (diensten_link-wrap). Bij hover op de kaart wisselen de twee pijl-iconen
+ * diagonaal — de kaart zet daarvoor de hover-selectors (zie DienstCard).
+ */
+import Icon from "../atoms/Icon.astro";
+
+interface Props {
+  label?: string;
+}
+
+const { label = "MEER LEZEN" } = Astro.props;
+---
+
+<div class="diensten_link-wrap">
+  <div class="diensten_link-icon_wrap">
+    <div class="diensten_link-icon1"><Icon name="arrow-diagonal" /></div>
+    <div class="diensten_link-icon2"><Icon name="arrow-diagonal" /></div>
+  </div>
+  <div class="diensten_text">{label}</div>
+</div>
+
+<style>
+  .diensten_link-wrap {
+    margin-right: var(--size--1rem);
+    margin-left: var(--size--1rem);
+    padding: var(--size--0-375rem) var(--space--4) var(--size--0-5rem);
+    grid-column-gap: var(--size--0-5rem);
+    grid-row-gap: var(--size--0-5rem);
+    background-color: var(--theme--background-secondary);
+    font-family: var(--font--secondary-family);
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    position: absolute;
+    inset: 0% auto auto 0%;
+    transform: translate(0, -50%);
+  }
+
+  .diensten_link-icon_wrap {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diensten_link-icon1 {
+    width: 1rem;
+    transform: translate(0);
+    transition: transform 0.3s;
+  }
+
+  .diensten_link-icon2 {
+    width: 1rem;
+    position: absolute;
+    inset: 0%;
+    transform: translate(-100%, 100%);
+    transition: transform 0.3s;
+  }
+
+  .diensten_text {
+    margin-top: 6px;
+  }
+</style>

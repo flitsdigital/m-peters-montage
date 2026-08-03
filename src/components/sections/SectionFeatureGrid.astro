@@ -1,0 +1,82 @@
+---
+/**
+ * Kop + intro met daaronder een grid van kleine kaartjes
+ * (`content_waarom-item`) — de "waarom kiezen voor…"-blokken op de
+ * regio- en zonweringpagina's.
+ *
+ * De kaartjes hebben in het origineel wisselende breedtes: eerst twee halve,
+ * daarna drie derden. Dat zit hier als `width` per item.
+ */
+import SectionShell from "./SectionShell.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Item {
+  title: string;
+  text?: string;
+  width?: "half" | "third";
+}
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  items: Item[];
+  background?: "secondary";
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const {
+  heading,
+  intro,
+  eyebrow,
+  items,
+  background,
+  paddingTop = "main",
+  paddingBottom = "main",
+} = Astro.props;
+---
+
+<SectionShell name="section_content" theme="inherit" {paddingTop} {paddingBottom}>
+  {background === "secondary" && <div class="background_secondary" slot="before" />}
+
+  {
+    (heading || intro) && (
+      <div class="u-mb-8">
+        <div class="content_layout u-grid-desktop">
+          <div class="content_content-wrapper u-column-6">
+            {eyebrow && (
+              <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />
+            )}
+            {heading && <h2>{heading}</h2>}
+            {intro && <p>{intro}</p>}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="u-grid-desktop">
+    {
+      items.map((item) => (
+        <div class={item.width === "half" ? "u-column-6" : "u-column-4"}>
+          <div class="content_waarom-item">
+            <h3>{item.title}</h3>
+            {item.text && <p>{item.text}</p>}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</SectionShell>
+
+<style>
+  .content_waarom-item {
+    background-color: var(--theme--background);
+    padding: 2rem;
+    position: relative;
+    height: 100%;
+  }
+</style>

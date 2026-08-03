@@ -1,0 +1,91 @@
+---
+/**
+ * Blogdetailpagina — /blog/{slug}.
+ * Let op: het overzicht staat op /blogs (meervoud), het detail op /blog
+ * (enkelvoud). Zo stond het in Webflow; niet aanpassen zonder redirect.
+ */
+import PageLayout from "../../layouts/PageLayout.astro";
+import HeaderCentered from "../../components/sections/HeaderCentered.astro";
+import SectionBlogContent from "../../components/sections/SectionBlogContent.astro";
+import SectionCardGrid from "../../components/sections/SectionCardGrid.astro";
+import SectionContact from "../../components/sections/SectionContact.astro";
+import PortableText from "../../sanity/PortableText.astro";
+import { imageProps, urlFor } from "../../sanity/client";
+
+export async function getStaticPaths() {
+  const { sanityClient } = await import("sanity:client");
+  const { BLOG_SLUGS_QUERY } = await import("../../sanity/queries");
+  const posts = await sanityClient.fetch(BLOG_SLUGS_QUERY);
+  return posts.map(({ slug }: { slug: string }) => ({ params: { slug } }));
+}
+
+const { fetchBlog, fetchContactSection } = await import("../../sanity/queries");
+
+const { slug } = Astro.params;
+const post = await fetchBlog(slug!);
+if (!post) return Astro.rewrite("/404");
+
+const contact = await fetchContactSection();
+
+const cover = imageProps(post.mainImage);
+const related = (post.related ?? []).flatMap((p: any) => {
+  const image = imageProps(p.image, 1200);
+  return image
+    ? [
+        {
+          href: `/blog/${p.slug}`,
+          title: p.title,
+          summary: p.summary,
+          image: image.src,
+          alt: image.alt || p.title,
+        },
+      ]
+    : [];
+});
+
+const ogImage = post.mainImage?.asset
+  ? urlFor(post.mainImage).width(1200).height(630).url()
+  : undefined;
+---
+
+<PageLayout
+  title={post.metaTitle || `${post.title} | M. Peters Montage`}
+  description={post.metaDescription || post.summary}
+  canonicalPath={`/blog/${slug}`}
+  ogType="article"
+  {ogImage}
+>
+  <HeaderCentered
+    heading={post.title}
+    body={post.summary}
+    image={cover?.src}
+    alt={cover?.alt || post.title}
+    breadcrumbs={[
+      { label: "Home", href: "/" },
+      { label: "Blogs", href: "/blogs" },
+      { label: post.title, href: `/blog/${slug}` },
+    ]}
+  />
+
+  <SectionBlogContent>
+    <PortableText value={post.body} />
+  </SectionBlogContent>
+
+  {
+    related.length > 0 && (
+      <SectionCardGrid heading="Meer lezen" headingAs="h2" items={related} background="secondary" />
+    )
+  }
+
+  {
+    contact && (
+      <SectionContact
+        heading={contact.heading}
+        eyebrow={contact.eyebrow}
+        formHeading={contact.formHeading}
+      >
+        <PortableText value={contact.body} />
+      </SectionContact>
+    )
+  }
+</PageLayout>

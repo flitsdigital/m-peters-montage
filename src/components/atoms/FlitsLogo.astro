@@ -1,0 +1,71 @@
+---
+/**
+ * "Website door FLITS"-link in de footer, inclusief de flikker-animatie
+ * (flits-flash) op het bliksem-pad (#flitsLogo) bij hover.
+ */
+import Icon from "./Icon.astro";
+---
+
+<a href="https://flitsdigital.nl" target="_blank" class="footer_flits">
+  <div class="footer_header">Website door</div>
+  <Icon name="flits" class="footer_flits-svg" />
+</a>
+
+<style>
+  .footer_flits {
+    grid-column-gap: var(--size--0-375rem);
+    grid-row-gap: var(--size--0-375rem);
+    color: #8d918d;
+    display: flex;
+  }
+
+  .footer_header {
+    font-weight: 700;
+  }
+
+  .footer_flits :global(.footer_flits-svg) {
+    width: 3rem;
+  }
+
+  @keyframes flits-flash {
+    0% {
+      opacity: 1;
+      color: #fff203;
+    }
+    5% {
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    25% {
+      opacity: 0;
+    }
+    45% {
+      opacity: 1;
+    }
+    53% {
+      opacity: 0;
+    }
+    56% {
+      opacity: 1;
+      color: #fff203;
+    }
+    76% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+      color: currentColor;
+    }
+  }
+
+  .footer_flits :global(#flitsLogo) {
+    --animation-ease: cubic-bezier(0.34, 1.52, 0.64, 1);
+    --speed: 0.8s;
+  }
+
+  .footer_flits:hover :global(#flitsLogo) {
+    animation: flits-flash var(--speed) var(--animation-ease);
+  }
+</style>

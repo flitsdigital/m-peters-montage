@@ -1,0 +1,72 @@
+---
+/**
+ * Reviews (section_reviews): light sectie op de secundaire achtergrond, kop
+ * links op 4 kolommen, intro rechts op 6, daaronder de slider.
+ * De sectie zit in een dark wrapper zodat `light` correct contrasteert.
+ */
+import SectionShell from "./SectionShell.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import Slider from "../molecules/Slider.astro";
+import ReviewCard from "../molecules/ReviewCard.astro";
+import type { IconName } from "../atoms/Icon.astro";
+
+interface Review {
+  name: string;
+  text: string;
+}
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName };
+  reviews: Review[];
+}
+
+const {
+  heading,
+  eyebrow = { text: "Reviews", icon: "eyebrow-reviews" as IconName },
+  reviews,
+} = Astro.props;
+---
+
+<SectionShell
+  name="section_reviews"
+  theme="light"
+  wrapper
+  wrapperTheme="dark"
+  paddingTop="main"
+  paddingBottom="none"
+>
+  <div class="reviews_heading-layout u-grid-desktop">
+    <div class="reviews_heading u-column-custom">
+      {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} />}
+      <h2>{heading}</h2>
+    </div>
+    <div class="u-column-6"><slot /></div>
+  </div>
+
+  <div data-padding-bottom="main" class="u-mt-8">
+    <Slider variant="reviews" label="Reviews van klanten">
+      {
+        reviews.map((r) => (
+          <div class="swiper-slide is-reviews">
+            <ReviewCard name={r.name} text={r.text} />
+          </div>
+        ))
+      }
+    </Slider>
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_reviews) {
+    background-color: var(--theme--background-secondary);
+  }
+
+  .reviews_heading-layout {
+    place-items: end start;
+  }
+
+  .reviews_heading {
+    grid-column: 2 / span 4;
+  }
+</style>

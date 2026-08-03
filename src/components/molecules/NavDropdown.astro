@@ -1,0 +1,168 @@
+---
+/**
+ * Diensten-dropdown in de desktop-nav. Pure CSS hover — het origineel doet
+ * dit ook zonder JS, binnen @media (hover:hover) and (pointer:fine).
+ */
+import Icon from "../atoms/Icon.astro";
+
+interface Item {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  label: string;
+  items: Item[];
+}
+
+const { label, items } = Astro.props;
+---
+
+<div class="nav_dropdown-w">
+  <div class="nav_dropdown-link">
+    <div class="nav_link">{label}</div>
+    <div class="icon-s"><Icon name="chevron-down" /></div>
+  </div>
+  <div class="nav_dropdown">
+    {items.map((i) => <a href={i.href} class="nav_dropdown-item">{i.label}</a>)}
+  </div>
+</div>
+
+<style>
+  .nav_dropdown-w {
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    display: inline-flex;
+    position: relative;
+  }
+
+  .nav_dropdown-link {
+    grid-column-gap: 0rem;
+    grid-row-gap: 0rem;
+    cursor: pointer;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    text-decoration: none;
+    display: flex;
+  }
+
+  .nav_link {
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+  }
+
+  .icon-s {
+    justify-content: center;
+    align-items: center;
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+  }
+
+  .nav_dropdown {
+    z-index: 99;
+    grid-column-gap: 0.25rem;
+    grid-row-gap: 0.25rem;
+    border: 1px solid var(--swatch--dark-60);
+    background-color: var(--swatch--dark-80);
+    border-radius: 0.5rem;
+    flex-flow: column;
+    align-items: flex-start;
+    width: max-content;
+    min-width: 100%;
+    max-width: 50rem;
+    margin-left: -1rem;
+    padding: 0.5rem;
+    display: flex;
+    position: absolute;
+    top: 3rem;
+    box-shadow: 0 9px 14px #0000001a;
+  }
+
+  .nav_dropdown-item {
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+    border-radius: 0.25rem;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 0.35rem 0.5rem 0.35rem 0.65rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    display: flex;
+    position: relative;
+  }
+
+  .nav_dropdown-item:hover {
+    background-color: var(--swatch--dark-60);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav_dropdown {
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-10px) scale(0.4) rotate(0);
+      transform-origin: top;
+      transition: all 0.1s var(--ease-spring);
+    }
+
+    .nav_dropdown-w:hover .nav_dropdown,
+    .nav_dropdown-w:focus-within .nav_dropdown {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(0.001deg);
+      transition: all 0.45s var(--ease-spring);
+    }
+
+    .nav_link:hover {
+      opacity: 0.6;
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    .nav_dropdown-w {
+      flex-flow: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width: 100%;
+      height: auto;
+    }
+
+    .nav_link {
+      width: 100%;
+      height: auto;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .nav_dropdown {
+      max-width: none;
+      max-height: none;
+      box-shadow: none;
+      border-width: 0;
+      width: 100%;
+      margin-left: 0;
+      padding: 0;
+      position: relative;
+      top: 0;
+      overflow: hidden;
+    }
+
+    .nav_dropdown-item {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+  }
+</style>

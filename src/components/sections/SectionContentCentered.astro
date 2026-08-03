@@ -1,0 +1,51 @@
+---
+/**
+ * Gecentreerd tekstblok op de secundaire achtergrond (section_content-centered).
+ */
+import SectionShell from "./SectionShell.astro";
+import RichText from "../atoms/RichText.astro";
+import Eyebrow from "../atoms/Eyebrow.astro";
+import Button from "../atoms/Button.astro";
+import type { IconName } from "../atoms/Icon.astro";
+import type { SectionSpace } from "../../design-system/tokens";
+
+interface Props {
+  heading: string;
+  eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
+  cta?: { label: string; href: string };
+  paddingTop?: SectionSpace;
+  paddingBottom?: SectionSpace;
+}
+
+const { heading, eyebrow, cta, paddingTop = "main", paddingBottom = "main" } =
+  Astro.props;
+---
+
+<SectionShell
+  name="section_content-centered"
+  theme="inherit"
+  {paddingTop}
+  {paddingBottom}
+>
+  <div class="u-grid-desktop">
+    <div class="u-column-centered">
+      {eyebrow && <Eyebrow text={eyebrow.text} icon={eyebrow.icon} variant={eyebrow.variant} />}
+      <h2>{heading}</h2>
+      <RichText><slot /></RichText>
+      {
+        cta && (
+          <div class="u-mt-4">
+            <Button label={cta.label} href={cta.href} icon="phone" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  :global(.section_content-centered) {
+    background-color: var(--theme--background-secondary);
+    --cutout-background: var(--theme--background-secondary);
+  }
+</style>

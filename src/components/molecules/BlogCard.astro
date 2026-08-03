@@ -1,0 +1,55 @@
+---
+/**
+ * Kaart in het blog-/projectenoverzicht (blog-items_wrapper): 16:9 beeld,
+ * titel, samenvatting en een "Meer lezen"-tekstlink. De hele kaart is de link.
+ */
+import Image from "../atoms/Image.astro";
+import TextLink from "../atoms/TextLink.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  href: string;
+  title: string;
+  summary?: string;
+  image: ImageMetadata | string;
+  alt: string;
+}
+
+const { href, title, summary, image, alt } = Astro.props;
+---
+
+<a {href} class="blog-items_wrapper">
+  <div class="blog-items_img">
+    <Image src={image} {alt} sizes="(max-width: 991px) 100vw, 33vw" />
+  </div>
+  <div class="blog-items_content">
+    <h3>{title}</h3>
+    {summary && <p>{summary}</p>}
+    <TextLink label="Meer lezen" />
+  </div>
+</a>
+
+<style>
+  .blog-items_wrapper {
+    display: block;
+    position: relative;
+    max-width: 100%;
+  }
+
+  .blog-items_img {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .blog-items_content {
+    margin-top: 1rem;
+  }
+
+  .blog-items_wrapper :global(img) {
+    transition: transform 0.3s;
+  }
+
+  .blog-items_wrapper:hover :global(img) {
+    transform: scale(1.05);
+  }
+</style>

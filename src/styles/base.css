@@ -1,0 +1,731 @@
+/* ============================================================================
+   BASE — reset + element-defaults + het globale layoutsysteem
+   Alleen wat écht globaal moet zijn. Componentstijl hoort component-scoped.
+   Van de 200+ u-* utilities in het export zijn alleen de 45 die daadwerkelijk
+   in de HTML voorkomen overgenomen.
+   ========================================================================= */
+
+/* ---------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--theme--background);
+  font-family: var(--text-main--font-family);
+  color: var(--theme--text);
+  font-size: var(--text-main--font-size);
+  line-height: var(--text-main--line-height);
+  font-weight: var(--text-main--font-weight);
+  letter-spacing: var(--text-main--letter-spacing);
+  text-transform: var(--text-main--text-transform);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-osx-font-smoothing: grayscale;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* Uit het origineel: alles lijnt op de onderkant uit tenzij anders bepaald.
+   Ongebruikelijk, maar de hele layout hangt eraan. */
+* {
+  vertical-align: bottom;
+}
+
+/* ------------------------------------------------------------- elements -- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  margin-bottom: var(--h1--margin-bottom);
+  font-family: var(--h1--font-family);
+  font-size: var(--h1--font-size);
+  line-height: var(--h1--line-height);
+  font-weight: var(--h1--font-weight);
+  letter-spacing: var(--h1--letter-spacing);
+  text-transform: var(--h1--text-transform);
+}
+
+/* h2 is de uitzondering: het Webflow-thema overschrijft de marges hier niet,
+   dus blijven de defaults uit webflow.css staan (20px / 10px). Dat is de
+   ruimte tussen een eyebrow en de kop eronder. */
+h2 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: var(--h2--font-family);
+  font-size: var(--h2--font-size);
+  line-height: var(--h2--line-height);
+  font-weight: var(--h2--font-weight);
+  letter-spacing: var(--h2--letter-spacing);
+  text-transform: var(--h2--text-transform);
+}
+
+h3 {
+  margin-bottom: var(--h3--margin-bottom);
+  font-family: var(--h3--font-family);
+  font-size: var(--h3--font-size);
+  line-height: var(--h3--line-height);
+  font-weight: var(--h3--font-weight);
+  letter-spacing: var(--h3--letter-spacing);
+  text-transform: var(--h3--text-transform);
+}
+
+h4 {
+  margin-bottom: var(--h4--margin-bottom);
+  font-family: var(--h4--font-family);
+  font-size: var(--h4--font-size);
+  line-height: var(--h4--line-height);
+  font-weight: var(--h4--font-weight);
+  letter-spacing: var(--h4--letter-spacing);
+  text-transform: var(--h4--text-transform);
+}
+
+h5 {
+  margin-bottom: var(--h5--margin-bottom);
+  font-family: var(--h5--font-family);
+  font-size: var(--h5--font-size);
+  line-height: var(--h5--line-height);
+  font-weight: var(--h5--font-weight);
+  letter-spacing: var(--h5--letter-spacing);
+  text-transform: var(--h5--text-transform);
+}
+
+h6 {
+  margin-bottom: var(--h6--margin-bottom);
+  font-family: var(--h6--font-family);
+  font-size: var(--h6--font-size);
+  line-height: var(--h6--line-height);
+  font-weight: var(--h6--font-weight);
+  letter-spacing: var(--h6--letter-spacing);
+  text-transform: var(--h6--text-transform);
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--text-main--margin-bottom);
+  font-family: var(--text-main--font-family);
+  font-size: var(--text-main--font-size);
+  line-height: var(--text-main--line-height);
+  font-weight: var(--text-main--font-weight);
+  letter-spacing: var(--text-main--letter-spacing);
+  text-transform: var(--text-main--text-transform);
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  outline-width: var(--focus--width);
+  outline-offset: var(--focus--offset-outer);
+}
+
+a:not([class]) {
+  text-decoration: underline;
+}
+
+a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+ul,
+ol {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: "";
+}
+
+img {
+  object-fit: cover;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+
+img::selection {
+  background: transparent;
+}
+
+svg {
+  max-width: 100%;
+}
+
+video {
+  width: 100%;
+  object-fit: cover;
+}
+
+figure {
+  margin-top: var(--space--5);
+  margin-bottom: var(--space--5);
+}
+
+blockquote {
+  border-style: none;
+  padding: 0;
+}
+
+label,
+blockquote {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+button {
+  background-color: unset;
+  border: 0;
+  padding: unset;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+section,
+header,
+footer {
+  position: relative;
+}
+
+@media (prefers-color-scheme: light) {
+  option {
+    color: black;
+  }
+}
+
+/* ---------------------------------------------------------------- focus -- */
+
+a,
+button,
+[tabindex] {
+  outline-offset: var(--focus--offset-outer);
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline-color: var(--theme--text);
+  outline-width: var(--focus--width);
+  outline-style: solid;
+}
+
+/* ----------------------------------------------------------- margin trim --
+   Eerste kind verliest zijn margin-top, laatste kind zijn margin-bottom.
+   In het origineel geschreven met .w-condition-invisible-selectors; hier
+   vereenvoudigd tot de equivalente :first-child / :last-child variant.
+   -------------------------------------------------------------------------- */
+
+:not(.u-margin-trim-off, .u-block-gap) > :first-child {
+  margin-top: 0;
+}
+
+:not(.u-margin-trim-off, .u-block-gap) > :last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================================
+   LAYOUTSYSTEEM
+   Containers, 12-koloms grid, sectie-spacing. De pixel-fidelity hangt hieraan;
+   niet "opschonen" of naar componenten verplaatsen.
+   ========================================================================= */
+
+/* ------------------------------------------------------- page-skelet ----- */
+
+.page_wrap {
+  overflow: clip;
+}
+
+/* Elke pagina: main begint onder de fixed nav (nav-hoogte + 1rem marge). */
+.page_main {
+  margin-top: calc(var(--nav--height) + 1rem);
+}
+
+/* Witte (theme-)rand van 1rem rond een groep secties; is-top laat de
+   bovenkant tegen de nav aan liggen. */
+.section_wrapper {
+  padding: 1rem;
+}
+
+.section_wrapper.is-top {
+  padding-top: 0;
+}
+
+/* Absolute achtergrondlaag in de secundaire themakleur (o.a. section_contact). */
+.background_secondary {
+  z-index: -1;
+  background-color: var(--theme--background-secondary);
+  position: absolute;
+  inset: 0%;
+}
+
+@media screen and (max-width: 479px) {
+  .section_wrapper {
+    padding: 0;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------- containers ----- */
+
+.u-container,
+.u-container-small,
+.u-container-full {
+  width: 100%;
+  padding-top: var(--section-space--main);
+  padding-bottom: var(--section-space--main);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.u-container {
+  height: 100%;
+  max-width: var(--container--main);
+}
+
+.u-container-small {
+  max-width: var(--container--small);
+}
+
+.u-container-full {
+  max-width: var(--container--full);
+}
+
+/* --------------------------------------------------- sectie-spacing ------ */
+
+[data-padding-top="none"] {
+  padding-top: var(--section-space--none);
+}
+[data-padding-bottom="none"] {
+  padding-bottom: var(--section-space--none);
+}
+[data-padding-top="even"] {
+  padding-top: var(--site--margin);
+}
+[data-padding-bottom="even"] {
+  padding-bottom: var(--site--margin);
+}
+[data-padding-top="small"] {
+  padding-top: var(--section-space--small);
+}
+[data-padding-bottom="small"] {
+  padding-bottom: var(--section-space--small);
+}
+[data-padding-top="main"] {
+  padding-top: var(--section-space--main);
+}
+[data-padding-bottom="main"] {
+  padding-bottom: var(--section-space--main);
+}
+[data-padding-top="large"] {
+  padding-top: var(--section-space--large);
+}
+[data-padding-bottom="large"] {
+  padding-bottom: var(--section-space--large);
+}
+
+/* ---------------------------------------------------------------- grids -- */
+
+.u-grid-desktop {
+  grid-column-gap: 1rem;
+  grid-row-gap: var(--site--gutter);
+  grid-template-rows: auto;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: var(--grid-main);
+  display: grid;
+}
+
+.u-grid-column-2,
+.u-grid-column-3,
+.u-grid-custom,
+.u-grid-autofit {
+  grid-column-gap: var(--site--gutter);
+  grid-row-gap: var(--site--gutter);
+  grid-template-rows: auto;
+  grid-auto-columns: minmax(0, 1fr);
+  display: grid;
+}
+
+.u-grid-column-2 {
+  grid-template-columns: var(--grid-2);
+}
+.u-grid-column-3 {
+  grid-template-columns: var(--grid-3);
+}
+.u-grid-custom {
+  grid-template-columns: var(--grid-1);
+}
+.u-grid-autofit {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+/* -------------------------------------------------------------- columns -- */
+
+.u-column-2 {
+  grid-column: auto / span 2;
+}
+.u-column-4 {
+  grid-column: auto / span 4;
+}
+.u-column-5 {
+  grid-column: auto / span 5;
+}
+.u-column-6 {
+  grid-column: auto / span 6;
+}
+.u-column-7 {
+  grid-column: auto / span 7;
+}
+.u-column-8 {
+  grid-column: auto / span 8;
+}
+.u-column-custom {
+  grid-column: auto / span 1;
+}
+.u-column-indent {
+  grid-column: 2 / -2;
+}
+.u-column-centered {
+  text-align: center;
+  flex-flow: column;
+  grid-column: 4 / span 6;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+}
+
+/* ------------------------------------------------------------ flex util -- */
+
+.u-hflex-left-center {
+  flex-flow: row;
+  place-content: center flex-start;
+  align-items: center;
+  display: flex;
+}
+
+.u-hflex-left-bottom {
+  flex-flow: row;
+  place-content: flex-end flex-start;
+  align-items: flex-end;
+  display: flex;
+}
+
+.u-vflex-left-top {
+  flex-flow: column;
+  place-content: flex-start;
+  align-items: flex-start;
+  display: flex;
+}
+
+.u-vflex-center-top {
+  flex-flow: column;
+  place-content: center flex-start;
+  align-items: center;
+  display: flex;
+}
+
+.u-vflex-center-bottom {
+  flex-flow: column;
+  place-content: center flex-end;
+  align-items: center;
+  display: flex;
+}
+
+/* ------------------------------------------------------------------ gap -- */
+
+.u-gap-2 {
+  grid-column-gap: var(--space--2);
+  grid-row-gap: var(--space--2);
+  --gap: var(--space--2);
+}
+.u-gap-4 {
+  grid-column-gap: var(--space--4);
+  grid-row-gap: var(--space--4);
+  --gap: var(--space--4);
+}
+.u-gap-6 {
+  grid-column-gap: var(--space--6);
+  grid-row-gap: var(--space--6);
+  --gap: var(--space--6);
+}
+
+/* Verticale block-gap: kinderen krijgen margin-top i.p.v. een flex/grid gap.
+   Gebruikt op het contactformulier. */
+.u-block-gap-vertical {
+  display: block;
+  --gap: 0;
+  --margin: var(--gap);
+}
+
+.u-block-gap-vertical > * {
+  margin-top: var(--margin);
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------- margin -- */
+
+.u-mt-1 {
+  margin-top: var(--space--1);
+}
+.u-mt-4 {
+  margin-top: var(--space--4);
+}
+.u-mt-6 {
+  margin-top: var(--space--6);
+}
+.u-mt-8 {
+  margin-top: var(--space--8);
+  position: relative;
+}
+.u-mb-3 {
+  margin-bottom: var(--space--3);
+}
+.u-mb-4 {
+  margin-bottom: var(--space--4);
+}
+.u-mb-8 {
+  margin-bottom: var(--space--8);
+}
+
+/* ------------------------------------------------------------ typografie -- */
+
+.u-text-style-h2 {
+  margin-bottom: var(--h2--margin-bottom);
+  font-family: var(--h2--font-family);
+  font-size: var(--h2--font-size);
+  line-height: var(--h2--line-height);
+  font-weight: var(--h2--font-weight);
+  letter-spacing: var(--h2--letter-spacing);
+  text-transform: var(--h2--text-transform);
+  text-wrap: balance;
+}
+
+.u-text-style-h3 {
+  margin-bottom: var(--h3--margin-bottom);
+  font-family: var(--h3--font-family);
+  font-size: var(--h3--font-size);
+  line-height: var(--h3--line-height);
+  font-weight: var(--h3--font-weight);
+  letter-spacing: var(--h3--letter-spacing);
+  text-transform: var(--h3--text-transform);
+  text-wrap: balance;
+}
+
+.u-text-style-h6 {
+  margin-bottom: 0;
+  font-family: var(--h6--font-family);
+  font-size: var(--h6--font-size);
+  line-height: var(--h6--line-height);
+  font-weight: var(--h6--font-weight);
+  letter-spacing: var(--h6--letter-spacing);
+  text-transform: var(--h6--text-transform);
+  text-wrap: balance;
+}
+
+.u-text-style-large {
+  margin-bottom: var(--text-large--margin-bottom);
+  font-family: var(--text-large--font-family);
+  font-size: var(--text-large--font-size);
+  line-height: var(--text-large--line-height);
+  font-weight: var(--text-large--font-weight);
+  letter-spacing: var(--text-large--letter-spacing);
+  text-transform: var(--text-large--text-transform);
+  text-wrap: pretty;
+}
+
+.u-text-style-small {
+  margin-bottom: var(--text-small--margin-bottom);
+  font-family: var(--text-small--font-family);
+  font-size: var(--text-small--font-size);
+  line-height: var(--text-small--line-height);
+  font-weight: var(--text-small--font-weight);
+  letter-spacing: var(--text-small--letter-spacing);
+  text-transform: var(--text-small--text-transform);
+  text-wrap: pretty;
+}
+
+/* Een u-text-style-* op een wrapper dwingt alle tekstkinderen naar dezelfde stijl. */
+[class*="u-text-style-"] > :where(h1, h2, h3, h4, h5, h6, p, blockquote) {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-wrap: inherit;
+  margin-top: inherit;
+  margin-bottom: inherit;
+}
+
+.u-weight-medium {
+  font-weight: var(--font--primary-medium);
+}
+
+.u-text-align-center {
+  text-align: center;
+}
+
+.u-text-2lines {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* --------------------------------------------------------------- overig -- */
+
+.u-cover-absolute {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0%;
+}
+
+.u-visual-wrap {
+  aspect-ratio: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.u-sr-only {
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+  border-width: 0;
+  width: 1px;
+  height: 1px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  position: absolute;
+  inset: 0% 0% auto;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   RICH TEXT
+   Typografie voor CMS-content (Portable Text output).
+   ========================================================================= */
+
+.u-rich-text h1 {
+  margin-top: var(--h1--margin-top);
+  margin-bottom: var(--h1--margin-bottom);
+}
+.u-rich-text h2 {
+  margin-top: var(--h2--margin-top);
+  margin-bottom: var(--h2--margin-bottom);
+}
+.u-rich-text h3 {
+  margin-top: var(--h3--margin-top);
+  margin-bottom: var(--h3--margin-bottom);
+  font-size: 1.25rem;
+}
+.u-rich-text h4 {
+  margin-top: var(--h4--margin-top);
+  margin-bottom: var(--h4--margin-bottom);
+  font-size: var(--h6--font-size);
+}
+.u-rich-text h5 {
+  margin-top: var(--h5--margin-top);
+  margin-bottom: var(--h5--margin-bottom);
+}
+.u-rich-text h6 {
+  margin-top: var(--h6--margin-top);
+  margin-bottom: var(--h6--margin-bottom);
+}
+.u-rich-text p {
+  margin-top: var(--text-main--margin-top);
+  margin-bottom: var(--text-main--margin-bottom);
+}
+.u-rich-text ul {
+  margin-bottom: var(--space--1);
+  padding-left: 1em;
+  list-style-type: disc;
+  overflow: visible;
+}
+.u-rich-text ol {
+  margin-bottom: var(--space--2);
+  padding-left: 1.7em;
+  list-style-type: decimal;
+  overflow: visible;
+}
+.u-rich-text li {
+  margin-bottom: var(--space--1);
+}
+.u-rich-text blockquote {
+  margin-top: var(--space--6);
+  margin-bottom: var(--space--6);
+  padding: var(--size--0-5rem) var(--size--1rem);
+  font-family: var(--text-large--font-family);
+  font-size: var(--text-large--font-size);
+  line-height: var(--text-large--line-height);
+  font-weight: var(--text-large--font-weight);
+  letter-spacing: var(--text-large--letter-spacing);
+  text-transform: var(--text-large--text-transform);
+  border-left-style: solid;
+  border-left-width: 0.2rem;
+}
+.u-rich-text a {
+  position: relative;
+  z-index: 4;
+  text-decoration: underline;
+}
+
+/* ============================================================================
+   RESPONSIVE — exact de drie Webflow-breakpoints. Geen nieuwe toevoegen.
+   ========================================================================= */
+
+@media screen and (max-width: 991px) {
+  .u-container-full {
+    padding-right: var(--size--1rem);
+    padding-left: var(--size--1rem);
+  }
+
+  .u-grid-desktop {
+    flex-flow: column;
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .u-grid-column-2,
+  .u-grid-column-3 {
+    grid-template-columns: var(--grid-1);
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .u-hflex-left-center.u-gap-4 {
+    grid-column-gap: var(--space--6);
+    grid-row-gap: var(--space--6);
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+}
