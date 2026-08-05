@@ -22,12 +22,11 @@ scripts/             migratie en controles
 
 ## Wat er nog te doen is
 
-- **`N8N_CONTACT_WEBHOOK_URL`** invullen in `.env` — zonder die URL geeft
-  `/api/contact` een nette foutmelding terug in plaats van te versturen.
-- **`/projecten/rolluiken`** staat op *draft* in Sanity maar wel in de oude
-  sitemap. Publiceren of een redirect instellen.
-- **Geo-coördinaten** in `siteSettings` horen nog bij het oude adres
-  (Zuiderkruis 19); opnieuw bepalen voor Lavas 10.
+- **Vercel**: repo importeren + environment variables zetten (zie *Livegang*).
+- **Deploy-hook**: Vercel deploy-hook koppelen aan een Sanity-webhook, anders
+  komen contentwijzigingen niet online (de site is statisch gebouwd).
+- **DNS** omzetten naar Vercel.
+- **Search Console**: sitemap opnieuw indienen na livegang.
 
 ## Ontwikkelen
 
@@ -123,21 +122,24 @@ gehaald — ze staan niet op de live site.
 
    `SANITY_API_WRITE_TOKEN` hoeft **niet** op Vercel — dat is alleen voor de
    lokale migratiescripts.
-3. **Sanity CORS**: voeg de Vercel-URL(s) toe onder
-   [sanity.io/manage](https://www.sanity.io/manage) → API → CORS origins
-   (productiedomein + de `*.vercel.app` preview-URL).
-4. **Studio deployen** zodat Michael content kan beheren:
-   ```bash
-   npm --prefix studio run deploy
-   ```
-   (draait op `https://<naam>.sanity.studio`)
-5. **DNS**: `mpetersmontage.nl` in Vercel koppelen (Vercel regelt SSL).
+3. **Deploy-hook** — zonder dit blijft de site hangen op de laatste build:
+   - Vercel → Settings → Git → Deploy Hooks → er één aanmaken (branch `main`).
+   - De URL koppelen aan een Sanity-webhook:
+     ```bash
+     npm --prefix studio exec sanity hook create -- \
+       --name vercel-deploy --url "<deploy-hook-url>" --dataset production
+     ```
+4. **DNS**: `mpetersmontage.nl` in Vercel koppelen (Vercel regelt SSL).
 
-Na een contentwijziging in Sanity een nieuwe Vercel-build triggeren (of een
-deploy-webhook instellen), want de pagina's zijn statisch gebouwd.
+**Sanity CORS** is niet nodig voor de site zelf: alle content wordt build-time
+server-side opgehaald, er is geen browser-call naar Sanity. Alleen de Studio
+heeft een origin nodig, en die staat er al in.
 
-## Omgevingsvariabelen
+### Studio
 
-Zie `.env.example`. `SANITY_API_WRITE_TOKEN` is alleen nodig voor de
-migratiescripts; `N8N_CONTACT_WEBHOOK_URL` voor het contactformulier.
-# m-peters-montage
+Gedeployed op **https://mpetersmontage.sanity.studio** — daar beheert Michael
+projecten, blogs, pagina's en reviews. Opnieuw uitrollen na een schemawijziging:
+
+```bash
+npm --prefix studio run deploy
+```

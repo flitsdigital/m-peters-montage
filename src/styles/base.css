@@ -36,6 +36,13 @@ body.no-scroll {
   overflow: hidden;
 }
 
+/* Zonder gereserveerde scrollbargoot verdwijnt de scrollbar zodra
+   body.no-scroll aangaat (menu openen) en springt de hele pagina — inclusief
+   de vaste navbalk en de CTA-knop — een scrollbarbreedte opzij. */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Uit het origineel: alles lijnt op de onderkant uit tenzij anders bepaald.
    Ongebruikelijk, maar de hele layout hangt eraan. */
 * {

@@ -23,6 +23,8 @@ import type { ImageMetadata } from "astro";
 interface Props {
   variant?: "content" | "over";
   heading: string;
+  /** Semantisch niveau van de kop; h1 als dit de hoofdkop van de pagina is. */
+  headingLevel?: "h1" | "h2";
   eyebrow?: { text: string; icon?: IconName; variant?: "primary" | "secondary" };
   image: ImageMetadata | string;
   alt: string;
@@ -41,6 +43,7 @@ interface Props {
 const {
   variant = "content",
   heading,
+  headingLevel = "h2",
   eyebrow,
   image,
   alt,
@@ -53,6 +56,7 @@ const {
   id,
 } = Astro.props;
 
+const HeadingTag = headingLevel;
 const isOver = variant === "over";
 const name = [
   isOver ? "section_over" : "section_content",
@@ -81,7 +85,7 @@ const name = [
                 variant={eyebrow.variant}
               />
             )}
-            <h2>{heading}</h2>
+            <HeadingTag>{heading}</HeadingTag>
             <RichText><slot /></RichText>
             {showSocials && (
               <div class="u-mt-6">
@@ -123,7 +127,7 @@ const name = [
                 variant={eyebrow.variant}
               />
             )}
-            <h2>{heading}</h2>
+            <HeadingTag>{heading}</HeadingTag>
             <RichText><slot /></RichText>
             {showSocials && (
               <div class="u-mt-6">

@@ -25,7 +25,7 @@ const { images } = Astro.props;
 <SectionShell name="section_project-images" theme="inherit">
   <div class="u-mb-8">
     <div class="u-grid-desktop">
-      <div class="u-column-centered">
+      <div class="u-column-centered project-images_body">
         <RichText><slot /></RichText>
       </div>
     </div>
@@ -96,6 +96,14 @@ const { images } = Astro.props;
 </script>
 
 <style>
+  /* .u-column-centered centreert ook de tekst; bij opsommingen komt het
+     bolletje daardoor los van zijn regel te staan. Kolom blijft gecentreerd
+     in het grid, de tekst erin lijnt links uit. */
+  .project-images_body {
+    text-align: left;
+    align-items: stretch;
+  }
+
   .project-images_img {
     aspect-ratio: 1;
     position: relative;

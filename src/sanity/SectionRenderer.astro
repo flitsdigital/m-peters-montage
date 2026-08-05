@@ -33,6 +33,14 @@ interface Props {
 
 const { sections = [] } = Astro.props;
 
+// Elke pagina heeft precies één <h1>. Normaal levert een hero of paginakop die;
+// heeft een pagina die niet (bv. /over-mij), dan wordt de eerste sectie met een
+// kop tot h1 gepromoveerd.
+const H1_FROM = ["heroHomeSection", "headerCenteredSection"];
+const pageHasHeader = sections.some((s: any) => H1_FROM.includes(s._type));
+const firstHeadingKey = sections.find((s: any) => s.heading)?._key;
+const isPageH1 = (s: any) => !pageHasHeader && s._key === firstHeadingKey;
+
 /** Lege objecten uit de Studio (alle velden leeg) niet doorgeven. */
 const clean = <T extends Record<string, any> | undefined>(value: T) =>
   value && Object.values(value).some((v) => v !== undefined && v !== null && v !== "")
@@ -107,6 +115,7 @@ const spacing = (s: any) => ({
           <SectionMedia
             variant={section.variant}
             heading={section.heading}
+            headingLevel={isPageH1(section) ? "h1" : "h2"}
             eyebrow={eyebrow}
             image={image.src}
             alt={image.alt}

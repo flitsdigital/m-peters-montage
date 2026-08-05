@@ -24,6 +24,8 @@ interface Props {
   analytics?: boolean;
   /** LocalBusiness JSON-LD meesturen (alleen op de homepage in het origineel). */
   localBusiness?: boolean;
+  /** Extra JSON-LD (Article, BreadcrumbList) voor detailpagina's. */
+  jsonLd?: Record<string, any> | Record<string, any>[];
 }
 
 const {
@@ -36,6 +38,7 @@ const {
   noindex = false,
   analytics = true,
   localBusiness = false,
+  jsonLd,
 } = Astro.props;
 
 // Nooit stega-tekens in <head>: die maken titles en descriptions in Google stuk.
@@ -47,7 +50,7 @@ const canonical = new URL(canonicalPath ?? Astro.url.pathname, SITE.url).href.re
   "",
 );
 
-const jsonLd = {
+const jsonLdLocalBusiness = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   name: SITE.name,
@@ -69,6 +72,12 @@ const jsonLd = {
   },
   sameAs: SITE.social.facebook,
 };
+
+// Alle JSON-LD-blokken die deze pagina meestuurt.
+const schemas = [
+  localBusiness && jsonLdLocalBusiness,
+  ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []),
+].filter(Boolean);
 ---
 
 <!doctype html>
@@ -145,13 +154,13 @@ const jsonLd = {
     }
 
     {
-      localBusiness && (
+      schemas.map((schema) => (
         <script
           is:inline
           type="application/ld+json"
-          set:html={JSON.stringify(jsonLd)}
+          set:html={JSON.stringify(schema)}
         />
-      )
+      ))
     }
 
     <slot name="head" />

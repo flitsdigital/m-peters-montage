@@ -62,7 +62,7 @@ const {
         variant === "plain" ? (
           <Fragment>
             {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-            <h1>{heading}</h1>
+            {heading && <h1>{heading}</h1>}
           </Fragment>
         ) : (
           <div class="u-vflex-center-top">
@@ -73,10 +73,12 @@ const {
                 <Eyebrow text={eyebrow.text} icon={eyebrow.icon} />
               </div>
             )}
-            <div class="u-text-align-center">
-              <h1 class={`u-text-style-${headingStyle}`}>{heading}</h1>
-              {body && <p class="u-text-style-large">{body}</p>}
-            </div>
+            {(heading || body) && (
+              <div class="u-text-align-center">
+                {heading && <h1 class={`u-text-style-${headingStyle}`}>{heading}</h1>}
+                {body && <p class="u-text-style-large">{body}</p>}
+              </div>
+            )}
             {cta && (
               <div class="u-mt-4">
                 <Button label={cta.label} href={cta.href} icon="phone" cutouts={false} />

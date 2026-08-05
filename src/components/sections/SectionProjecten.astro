@@ -72,17 +72,15 @@ const {
 </SectionShell>
 
 <style>
+  /* De sectie draait op container={false} (de slider is fullbleed), dus de
+     verticale ruimte staat hier op de <section> zelf in plaats van op een
+     u-container met data-padding. */
+  :global(.section_projecten) {
+    padding-top: var(--section-space--main);
+    padding-bottom: var(--section-space--main);
+  }
+
   .projecten_header {
     grid-column: 2 / span 6;
-  }
-
-  .projecten_container {
-    padding-top: var(--section-space--none);
-  }
-
-  @media screen and (max-width: 479px) {
-    .projecten_container {
-      padding-top: var(--section-space--main);
-    }
   }
 </style>

@@ -11,6 +11,7 @@ import SectionProjecten from "../../components/sections/SectionProjecten.astro";
 import SectionContact from "../../components/sections/SectionContact.astro";
 import PortableText from "../../sanity/PortableText.astro";
 import { imageProps, urlFor } from "../../sanity/client";
+import { articleLd, breadcrumbLd } from "../../data/jsonld";
 
 export async function getStaticPaths() {
   const { sanityClient } = await import("sanity:client");
@@ -52,6 +53,22 @@ const related = (project.related ?? []).flatMap((p: any) => {
 const ogImage = project.coverImage?.asset
   ? urlFor(project.coverImage).width(1200).height(630).url()
   : undefined;
+
+const breadcrumbs = [
+  { label: "Home", href: "/" },
+  { label: "Projecten", href: "/projecten" },
+  { label: project.title, href: `/projecten/${slug}` },
+];
+const jsonLd = [
+  articleLd({
+    title: project.title,
+    description: project.summary,
+    image: ogImage,
+    datePublished: project.publishedAt,
+    path: `/projecten/${slug}`,
+  }),
+  breadcrumbLd(breadcrumbs),
+];
 ---
 
 <PageLayout
@@ -60,17 +77,14 @@ const ogImage = project.coverImage?.asset
   canonicalPath={`/projecten/${slug}`}
   ogType="article"
   {ogImage}
+  {jsonLd}
 >
   <HeaderCentered
     heading={project.title}
     body={project.summary}
     image={cover?.src}
     alt={cover?.alt || project.title}
-    breadcrumbs={[
-      { label: "Home", href: "/" },
-      { label: "Projecten", href: "/projecten" },
-      { label: project.title, href: `/projecten/${slug}` },
-    ]}
+    {breadcrumbs}
   />
 
   {

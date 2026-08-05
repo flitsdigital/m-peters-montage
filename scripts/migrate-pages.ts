@@ -109,8 +109,34 @@ function readOverlay(scope: Element | null) {
   return match ? Number(match[1]) / 100 : undefined;
 }
 
+const blockText = (b: any) =>
+  (b?.children ?? []).map((c: any) => c.text ?? "").join("").replace(/\s+/g, " ").trim();
+
+const same = (a: string, b: string) =>
+  a.replace(/\s+/g, " ").trim().toLowerCase() === b.replace(/\s+/g, " ").trim().toLowerCase();
+
+/**
+ * De sectiekop zit soms ín de rich text (en wordt dan niet door `skip`
+ * gevangen, want die kijkt alleen naar directe kinderen). Zonder dit zou hij
+ * twee keer op de pagina staan: één keer als `heading`, één keer in de body.
+ */
+function stripHeading(blocks: any[] | undefined, heading?: string) {
+  if (!blocks?.length || !heading) return blocks;
+  const i = blocks.findIndex((b) => b._type === "block" && blockText(b));
+  if (i < 0) return blocks;
+  const first = blocks[i];
+  const isHeading = /^h[1-6]$/.test(first.style ?? "");
+  return isHeading && same(blockText(first), heading)
+    ? blocks.filter((_, j) => j !== i)
+    : blocks;
+}
+
 /** Alle <p>/<h*>/<ul> in een blok → Portable Text, kop uitgezonderd. */
-function readBody(scope: Element | null, skip: string[] = ["h1", "h2", "h3"]) {
+function readBody(
+  scope: Element | null,
+  skip: string[] = ["h1", "h2", "h3"],
+  dropHeading?: string,
+) {
   if (!scope) return undefined;
   const parts: string[] = [];
   for (const child of Array.from(scope.children)) {
@@ -136,7 +162,8 @@ function readBody(scope: Element | null, skip: string[] = ["h1", "h2", "h3"]) {
       if (rich) parts.push(rich.innerHTML);
     }
   }
-  return parts.length ? toPortableText(parts.join("\n")) : undefined;
+  if (!parts.length) return undefined;
+  return stripHeading(toPortableText(parts.join("\n")), dropHeading);
 }
 
 const key = (prefix: string, i: number) => `${prefix}-${i}`;
@@ -262,7 +289,7 @@ async function extractSection(section: Element, index: number): Promise<any | un
       _type: "mediaSection",
       variant: "content",
       heading: heading(wrapper),
-      body: readBody(wrapper),
+      body: readBody(wrapper, undefined, heading(wrapper)),
       eyebrow: readEyebrow(wrapper),
       image,
       cta: readCta(wrapper),
@@ -285,7 +312,7 @@ async function extractSection(section: Element, index: number): Promise<any | un
       _type: "mediaSection",
       variant: "over",
       heading: heading(wrapper),
-      body: readBody(wrapper),
+      body: readBody(wrapper, undefined, heading(wrapper)),
       eyebrow: readEyebrow(wrapper),
       image,
       cta: readCta(wrapper),
@@ -301,7 +328,7 @@ async function extractSection(section: Element, index: number): Promise<any | un
       _key,
       _type: "contentCenteredSection",
       heading: heading(wrapper),
-      body: readBody(wrapper),
+      body: readBody(wrapper, undefined, heading(wrapper)),
       eyebrow: readEyebrow(wrapper),
       cta: readCta(wrapper),
       paddingTop,
@@ -397,7 +424,7 @@ async function extractSection(section: Element, index: number): Promise<any | un
       _key,
       _type: "contactSection",
       heading: heading(content),
-      body: readBody(content),
+      body: readBody(content, undefined, heading(content)),
       eyebrow: readEyebrow(content),
       formHeading: text(section.querySelector(".contact_component h3")),
     };
@@ -423,7 +450,7 @@ async function extractSection(section: Element, index: number): Promise<any | un
       _key,
       _type: "dienstenSection",
       heading: heading(header),
-      body: readBody(header),
+      body: readBody(header, undefined, heading(header)),
       eyebrow: readEyebrow(header),
       items,
     };
@@ -445,12 +472,13 @@ async function extractSection(section: Element, index: number): Promise<any | un
 
   /* ---- regio's ---- */
   if (cls.includes("section_regio")) {
-    // In Webflow een CMS-lijst; er is geen CSV-export van die collectie.
-    // De drie regiopagina's bestaan wel statisch — die gebruiken we.
+    // In Webflow een CMS-lijst; die staat als "No items found" in de export,
+    // dus er valt niets uit te lezen. Titels en volgorde daarom overgenomen
+    // van de live site; de beelden komen van de regiopagina's zelf.
     const regios = [
-      { title: "Klazienaveen", slug: "klazienaveen" },
-      { title: "Emmen", slug: "emmen" },
-      { title: "Drenthe", slug: "drenthe" },
+      { title: "Kunststof kozijnen Emmen", slug: "emmen" },
+      { title: "Kunststof kozijnen Klazienaveen", slug: "klazienaveen" },
+      { title: "Kunststof kozijnen Drenthe", slug: "drenthe" },
     ];
     const items = [];
     for (const [i, regio] of regios.entries()) {

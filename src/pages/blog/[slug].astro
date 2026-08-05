@@ -11,6 +11,7 @@ import SectionCardGrid from "../../components/sections/SectionCardGrid.astro";
 import SectionContact from "../../components/sections/SectionContact.astro";
 import PortableText from "../../sanity/PortableText.astro";
 import { imageProps, urlFor } from "../../sanity/client";
+import { articleLd, breadcrumbLd } from "../../data/jsonld";
 
 export async function getStaticPaths() {
   const { sanityClient } = await import("sanity:client");
@@ -46,6 +47,22 @@ const related = (post.related ?? []).flatMap((p: any) => {
 const ogImage = post.mainImage?.asset
   ? urlFor(post.mainImage).width(1200).height(630).url()
   : undefined;
+
+const breadcrumbs = [
+  { label: "Home", href: "/" },
+  { label: "Blogs", href: "/blogs" },
+  { label: post.title, href: `/blog/${slug}` },
+];
+const jsonLd = [
+  articleLd({
+    title: post.title,
+    description: post.summary,
+    image: ogImage,
+    datePublished: post.publishedAt,
+    path: `/blog/${slug}`,
+  }),
+  breadcrumbLd(breadcrumbs),
+];
 ---
 
 <PageLayout
@@ -54,17 +71,14 @@ const ogImage = post.mainImage?.asset
   canonicalPath={`/blog/${slug}`}
   ogType="article"
   {ogImage}
+  {jsonLd}
 >
   <HeaderCentered
     heading={post.title}
     body={post.summary}
     image={cover?.src}
     alt={cover?.alt || post.title}
-    breadcrumbs={[
-      { label: "Home", href: "/" },
-      { label: "Blogs", href: "/blogs" },
-      { label: post.title, href: `/blog/${slug}` },
-    ]}
+    {breadcrumbs}
   />
 
   <SectionBlogContent>
