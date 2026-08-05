@@ -64,6 +64,13 @@ const withNav = variant === "reviews";
   // een statische import laat Rollup de ongebruikte modules weggooien.
   import { Autoplay, Navigation, Pagination } from "swiper/modules";
 
+  // Ook statisch. Als dynamische import() zet Rollup wél een verwijzing naar
+  // de CSS-chunk in de bundle, maar schrijft het bestand niet weg — in de
+  // productiebuild gaf dat een 404, waardoor Swiper nooit initialiseerde.
+  import "swiper/css";
+  import "swiper/css/navigation";
+  import "swiper/css/pagination";
+
   const CONFIG = {
     reviews: {
       loop: true,
@@ -93,12 +100,7 @@ const withNav = variant === "reviews";
    * zodra er één in de buurt van het scherm komt.
    */
   async function init(el: HTMLElement) {
-    const [{ default: Swiper }] = await Promise.all([
-      import("swiper"),
-      import("swiper/css"),
-      import("swiper/css/navigation"),
-      import("swiper/css/pagination"),
-    ]);
+    const { default: Swiper } = await import("swiper");
 
     const variant = el.dataset.slider as keyof typeof CONFIG;
     new Swiper(el, {

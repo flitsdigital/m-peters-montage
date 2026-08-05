@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev"],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "name": "build-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-s", ".vercel/output/static", "-l", "4330"],
+      "port": 4330
     }
   ]
 }
